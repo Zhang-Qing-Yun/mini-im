@@ -7,6 +7,12 @@
     <groupId>com.qingyun</groupId>
     <artifactId>mini-im</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>im-auth</module>
+        <module>im-common</module>
+        <module>im-client</module>
+        <module>im-server</module>
+    </modules>
     <packaging>pom</packaging>
 
     <!--集中定义版本号-->
@@ -17,10 +23,14 @@
         <netty.version>4.1.50.Final</netty.version>
         <protobuf.version>3.7.1</protobuf.version>
         <springBoot.version>2.2.1.RELEASE</springBoot.version>
+        <springSecurity.version>5.2.1.RELEASE</springSecurity.version>
         <mybatis-plus.version>3.0.5</mybatis-plus.version>
+        <velocity.version>2.0</velocity.version>
+        <swagger.version>2.7.0</swagger.version>
         <mysql.version>8.0.15</mysql.version>
         <fastjson.version>1.2.28</fastjson.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
+        <okhttp.version>3.3.1</okhttp.version>
     </properties>
 
     <dependencyManagement>
@@ -32,6 +42,11 @@
                 <version>${springBoot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-core</artifactId>
+                <version>${springSecurity.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
@@ -48,6 +63,12 @@
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
+            <!--mybatis-plus代码生成器需要-->
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity-engine-core</artifactId>
+                <version>${velocity.version}</version>
+            </dependency>
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
@@ -63,12 +84,29 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
             </dependency>
-
+            <!--swagger-->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <!--swagger ui-->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <dependencies>
-
-    </dependencies>
     
 </project>

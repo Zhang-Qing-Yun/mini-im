@@ -1,0 +1,53 @@
+package com.qingyun.im.client.command;
+
+import com.qingyun.im.client.command.handle.CommandHandle;
+import com.qingyun.im.common.enums.Exceptions;
+import com.qingyun.im.common.exception.IMException;
+
+/**
+ * @description： 命令类型
+ * @author: 張青云
+ * @create: 2021-09-24 19:42
+ **/
+public enum Command {
+    HELP("help", "提供帮助，获取所有的命令  【示例：help】"),
+    LOGIN("login", "登录  【示例：login username password】");
+
+
+    //  命令的关键字
+    private final String commandKey;
+
+    //  该命令的描述
+    private final String describe;
+
+
+    Command(String commandKey, String describe) {
+        this.commandKey = commandKey;
+        this.describe = describe;
+    }
+
+    public String getCommandKey() {
+        return commandKey;
+    }
+
+    public String getDescribe() {
+        return describe;
+    }
+
+    /**
+     * 根据命令的字面值获取对应的Command
+     * @param value 命令
+     * @return 对应的Command
+     */
+    public static Command getCommandByKey(String value) throws IMException {
+        String commandKey = CommandHandle.getCommandKey(value);
+        Command[] commands = values();
+        for (Command command: commands) {
+            if (commandKey.equals(command.getCommandKey())) {
+                return command;
+            }
+        }
+        //  没有该命令
+        throw new IMException(Exceptions.NO_COMMAND.getCode(), Exceptions.NO_COMMAND.getMessage());
+    }
+}
