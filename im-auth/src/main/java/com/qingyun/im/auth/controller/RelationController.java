@@ -49,5 +49,11 @@ public class RelationController {
         }
         return R.error();
     }
+
+    @GetMapping("/getFriendList")
+    public R getFriendList(String username) {
+        List<String> friendList = relationService.getFriendList(username);
+        return R.ok().data("friendList", friendList);
+    }
 }
 

@@ -121,6 +121,30 @@ public class RelationServiceImpl extends ServiceImpl<RelationMapper, Relation> i
         return userService.selectUsernamesByIds(ids);
     }
 
+    @Override
+    public List<String> getFriendList(String username) {
+        //  查询用户id
+        Long userId = userService.selectIdByUsername(username);
+        if (userId == null) {
+            return null;
+        }
+        List<Relation> friendList = relationMapper.getFriendList(userId);
+        if (friendList == null || friendList.size() == 0) {
+            return null;
+        }
+        //  收集好友的id
+        List<Long> ids = new ArrayList<>(friendList.size());
+        for (Relation one: friendList) {
+            if (one.getUserId1().equals(userId)) {
+                ids.add(one.getUserId2());
+            } else {
+                ids.add(one.getUserId1());
+            }
+        }
+        //  查询这些id对应的username
+        return userService.selectUsernamesByIds(ids);
+    }
+
     /**
      * 根据两个用户的id来查询两者之间是否存在记录
      */

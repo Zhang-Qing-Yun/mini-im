@@ -45,4 +45,11 @@ public interface RelationService extends IService<Relation> {
      * @return 属于该用户的好友请求，没有则返回null
      */
     List<String> getFriendAsk(String username);
+
+    /**
+     * 查询指定用户所有的好友
+     * @param username 指定用户
+     * @return 好友列表，没有则返回null
+     */
+    List<String> getFriendList(String username);
 }

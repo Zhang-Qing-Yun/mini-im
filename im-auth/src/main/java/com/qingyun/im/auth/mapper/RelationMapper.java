@@ -25,5 +25,13 @@ public interface RelationMapper extends BaseMapper<Relation> {
      */
     @Select("select * from relation where (`user_id1`=#{userId} and `status`=1) or " +
             "(`user_id2`=#{userId} AND `status`=2)")
-    List<Relation> getFriendAsk(long userId);
+    List<Relation> getFriendAsk(Long userId);
+
+    /**
+     * 查询指定用户的好友列表
+     * @param userId 指定的用户
+     * @return 全部的好友关系
+     */
+    @Select("SELECT * FROM `relation` WHERE (`user_id1`=#{userId} OR `user_id2`=#{userId}) AND `status`=0")
+    List<Relation> getFriendList(Long userId);
 }
