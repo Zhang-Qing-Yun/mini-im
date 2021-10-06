@@ -63,11 +63,8 @@ public class LoginCommandHandle implements CommandHandle {
         JSONObject param = new JSONObject();
         param.put("username", username);
         param.put("password", password);
-        Response response = HttpClient.call(okHttpClient, param.toString(), url);
+        Response response = HttpClient.post(okHttpClient, param.toString(), url);
         //  判断是否登陆成功
-        if(!response.isSuccessful()) {
-            throw new IMException(Exceptions.HTTP_ERROR.getCode(), Exceptions.HTTP_ERROR.getMessage());
-        }
         R result = JSON.parseObject(response.body().string(), R.class);
         if (!result.getSuccess()) {
             System.out.println(result.getMessage());

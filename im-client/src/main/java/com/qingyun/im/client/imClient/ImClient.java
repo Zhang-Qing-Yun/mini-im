@@ -17,6 +17,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -61,6 +62,11 @@ public class ImClient {
 
 
     public ImClient() {
+
+    }
+
+    @PostConstruct  // 在BeanPostProcessor的前置处理器处被执行
+    private void init() {
         commandThread = new Thread(commandScan);
         commandThread.setName("命令线程");
         group = new NioEventLoopGroup();
@@ -95,15 +101,15 @@ public class ImClient {
         session.setLogin(true);
         session.setUserInfo(UserInfo.getInstance());
         //  连接Netty Server
-        try {
-            this.channel = doConnect();
-        } catch (Exception e) {
-            //  当连接出现问题时,直接退出
-            System.out.println("无法连接Server!");
-            throw new IMRuntimeException(Exceptions.CONNECT_ERROR.getCode(), Exceptions.CONNECT_ERROR.getMessage());
-        }
-        session.setConnected(true);
-        session.setChannel(channel);
+//        try {
+//            this.channel = doConnect();
+//        } catch (Exception e) {
+//            //  当连接出现问题时,直接退出
+//            System.out.println("无法连接Server!");
+//            throw new IMRuntimeException(Exceptions.CONNECT_ERROR.getCode(), Exceptions.CONNECT_ERROR.getMessage());
+//        }
+//        session.setConnected(true);
+//        session.setChannel(channel);
         //  启动命令线程
         commandThread.start();
     }

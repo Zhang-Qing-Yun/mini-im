@@ -14,6 +14,7 @@ public enum Exceptions {
 
     NO_COMMAND(1000, "没有该命令"),
     PARSE_ERROR(1001, "命令解析时出错"),
+    NO_LOGIN(1002, "当前没有登录"),
     HTTP_ERROR(2000, "发送HTTP请求时出错"),
     LOGIN_ERROR(2001, "登录失败"),
     REGISTER_ERROR(2002, "注册失败"),

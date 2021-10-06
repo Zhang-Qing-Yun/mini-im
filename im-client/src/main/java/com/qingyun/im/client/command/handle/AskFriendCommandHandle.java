@@ -1,7 +1,7 @@
 package com.qingyun.im.client.command.handle;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.qingyun.im.client.annotation.LoginRequired;
 import com.qingyun.im.client.command.Command;
 import com.qingyun.im.client.imClient.ClientSession;
 import com.qingyun.im.common.enums.Exceptions;
@@ -14,12 +14,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @description： 加好友请求的命令处理器
  * @author: 張青云
  * @create: 2021-10-06 14:28
  **/
 @Component
+@LoginRequired
 public class AskFriendCommandHandle implements CommandHandle{
     @Value("${auth.address}")
     private String authAddress;
@@ -61,15 +65,12 @@ public class AskFriendCommandHandle implements CommandHandle{
         String username2 = parseValue[1];
         //  发HTTP请求登录的过程
         String url = authAddress + askFriendUrl;
-        JSONObject param = new JSONObject();
+        Map<String, String> param = new HashMap<>();
         param.put("username1", username1);
         param.put("username2", username2);
-        Response response = HttpClient.call(okHttpClient, param.toString(), url);
+        Response response = HttpClient.get(okHttpClient, param, url);
 
         //  解析结果
-        if(!response.isSuccessful()) {
-            throw new IMException(Exceptions.HTTP_ERROR.getCode(), Exceptions.HTTP_ERROR.getMessage());
-        }
         R result = JSON.parseObject(response.body().string(), R.class);
         if (!result.getSuccess()) {
             System.out.println(result.getMessage());
