@@ -7,7 +7,9 @@ package com.qingyun.im.common.enums;
  **/
 public enum ResultType {
     SUCCESS(200, "成功"),
-    FAIL(500, "失败");
+    FAIL(500, "失败"),
+    LOGIN_FAIL(10001, "登录失败"),
+    REGISTER_FAIL(10002, "注册失败");
 
     private final int code;
     private final String msg;

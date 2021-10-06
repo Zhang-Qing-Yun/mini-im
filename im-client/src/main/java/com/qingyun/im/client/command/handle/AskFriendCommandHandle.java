@@ -3,6 +3,7 @@ package com.qingyun.im.client.command.handle;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.qingyun.im.client.command.Command;
+import com.qingyun.im.client.imClient.ClientSession;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.util.HttpClient;
@@ -14,37 +15,35 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * @description： 处理登录命令
+ * @description： 加好友请求的命令处理器
  * @author: 張青云
- * @create: 2021-09-25 10:11
+ * @create: 2021-10-06 14:28
  **/
 @Component
-public class LoginCommandHandle implements CommandHandle {
-    //  用户名
-    private String username;
-    //  密码
-    private String password;
-
+public class AskFriendCommandHandle implements CommandHandle{
     @Value("${auth.address}")
     private String authAddress;
 
-    @Value("${auth.loginUrl}")
-    private String loginUrl;
+    @Value("${auth.askFriendUrl}")
+    private String askFriendUrl;
 
     @Autowired
     private OkHttpClient okHttpClient;
+
+    @Autowired
+    private ClientSession session;
 
 
     @Override
     public boolean isCare(String commandValue) {
         String commandKey = CommandHandle.getCommandKey(commandValue);
-        return commandKey.equals(Command.LOGIN.getCommandKey());
+        return commandKey.equals(Command.ASK_FRIEND.getCommandKey());
     }
 
     @Override
     public boolean isCorrect(String commandValue) {
         String[] parseValue = commandValue.trim().split(" ");
-        return parseValue.length == 3;
+        return parseValue.length == 2;
     }
 
     @Override
@@ -56,28 +55,27 @@ public class LoginCommandHandle implements CommandHandle {
 
         //  解析该命令
         String[] parseValue = commandValue.trim().split(" ");
-        this.username = parseValue[1];
-        this.password = parseValue[2];
+        //  发送好友请求的人
+        String username1 = session.getUserInfo().getUsername();
+        //  要添加的人
+        String username2 = parseValue[1];
         //  发HTTP请求登录的过程
-        String url = authAddress + loginUrl;
+        String url = authAddress + askFriendUrl;
         JSONObject param = new JSONObject();
-        param.put("username", username);
-        param.put("password", password);
+        param.put("username1", username1);
+        param.put("username2", username2);
         Response response = HttpClient.call(okHttpClient, param.toString(), url);
-        //  判断是否登陆成功
+
+        //  解析结果
         if(!response.isSuccessful()) {
             throw new IMException(Exceptions.HTTP_ERROR.getCode(), Exceptions.HTTP_ERROR.getMessage());
         }
         R result = JSON.parseObject(response.body().string(), R.class);
         if (!result.getSuccess()) {
             System.out.println(result.getMessage());
-            throw new IMException(Exceptions.LOGIN_ERROR.getCode(), Exceptions.LOGIN_ERROR.getMessage());
+            throw new IMException(Exceptions.ASK_FRIEND_ERROR.getCode(), Exceptions.ASK_FRIEND_ERROR.getMessage());
         }
-        //  TODO：解析结果
-        System.out.println(result);
-    }
 
-    public String getUsername() {
-        return username;
+        System.out.println("已向" + username2 + "发送好友请求！");
     }
 }

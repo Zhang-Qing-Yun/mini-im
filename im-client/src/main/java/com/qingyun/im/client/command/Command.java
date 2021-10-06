@@ -11,10 +11,13 @@ import com.qingyun.im.common.exception.IMException;
  **/
 public enum Command {
     HELP("help", "提供帮助，获取所有的命令  【示例：help】"),
-    LOGIN("login", "登录  【示例：login username password】");
+    LOGIN("login", "登录  【示例：login username password】"),
+    ASK_FRIEND("askFriend", "添加好友  【示例：askFriend username】"),
+    ACK_FRIEND("ackFriend", "同意加好友  【示例：ackFriend username】"),
+    FRIEND_ASK("getFriendAsk", "查看所有的好友请求  【示例：getFriendAsk】");
 
 
-    //  命令的关键字
+    //  命令的关键字，只能是一个单词
     private final String commandKey;
 
     //  该命令的描述

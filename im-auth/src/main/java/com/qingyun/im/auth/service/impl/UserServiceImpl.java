@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -45,6 +47,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         wrapper.eq("username", username);
         User user = userMapper.selectOne(wrapper);
         return user;
+    }
+
+    @Override
+    public Long selectIdByUsername(String username) {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("username", username);
+        wrapper.select("id");
+        return userMapper.selectOne(wrapper).getId();
+    }
+
+    @Override
+    public List<String> selectUsernamesByIds(List<Long> ids) {
+        return userMapper.selectUsernamesByIds(ids);
     }
 
     @Override

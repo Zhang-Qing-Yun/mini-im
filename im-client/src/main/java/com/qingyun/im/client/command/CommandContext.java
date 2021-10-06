@@ -66,23 +66,26 @@ public class CommandContext implements ApplicationContextAware {
     /**
      * 调用具体的处理器去执行该命令
      * @param commandValue 命令
+     * @return 是否执行成功
      */
-    public void invokeHandle(String commandValue) {
+    public boolean invokeHandle(String commandValue) {
         //  根据命令关键字获取Command
         Command command = null;
         try {
             command = Command.getCommandByKey(commandValue);
         } catch (IMException e) {
             System.out.println(e.getMsg());
-            return;
+            return false;
         }
         //  获取相应的处理器
         CommandHandle handle = getCommandHandle(command);
 
         try {
             handle.process(commandValue);
+            return true;
         } catch (Exception e) {
             System.out.println("错误，请重试！" + "提示：" + e.getMessage());
+            return false;
         }
     }
 }

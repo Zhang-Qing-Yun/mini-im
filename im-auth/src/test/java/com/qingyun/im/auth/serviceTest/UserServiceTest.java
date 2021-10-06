@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+
 /**
  * @description：
  * @author: 張青云
@@ -20,7 +22,7 @@ public class UserServiceTest {
 
     @Test
     public void insertTest() {
-        userService.insert("qingyun", "123456");
+        userService.insert("qiang", "123456");
     }
 
     @Test
@@ -32,5 +34,10 @@ public class UserServiceTest {
     public void selectByUsernameTest() {
         System.out.println(userService.selectByUsername("qingyun"));
         System.out.println(userService.selectByUsername("qingyun1"));
+    }
+
+    @Test
+    public void selectUsernamesByIdsTest() {
+        System.out.println(userService.selectUsernamesByIds(Arrays.asList(1L, 2L)));
     }
 }

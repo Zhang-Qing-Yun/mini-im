@@ -3,6 +3,8 @@ package com.qingyun.im.auth.service;
 import com.qingyun.im.auth.vo.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -27,6 +29,20 @@ public interface UserService extends IService<User> {
      * @return 查询结果，如果没有该用户则返回null
      */
     User selectByUsername(String username);
+
+    /**
+     * 根据用户名查询用户id
+     * @param username 用户名
+     * @return 用户id
+     */
+    Long selectIdByUsername(String username);
+
+    /**
+     * 根据ids批量查询用户名
+     * @param ids 一系列用户id
+     * @return 用户名
+     */
+    List<String> selectUsernamesByIds(List<Long> ids);
 
     /**
      * 查询该username是否已经被使用过了
