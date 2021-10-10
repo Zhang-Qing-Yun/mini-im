@@ -1,6 +1,8 @@
 package com.qingyun.im.server.imServer;
 
 import com.alibaba.fastjson.JSON;
+import com.qingyun.im.common.codec.ProtobufDecoder;
+import com.qingyun.im.common.codec.ProtobufEncoder;
 import com.qingyun.im.common.constants.ServerConstants;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.exception.IMException;
@@ -13,10 +15,7 @@ import com.qingyun.im.server.router.zk.CuratorZKClient;
 import com.qingyun.im.server.router.zk.ZKListener;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -76,8 +75,11 @@ public class ImServer {
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
+                    protected void initChannel(SocketChannel ch) throws Exception {
                         //  TODO:添加handle
+                        ChannelPipeline pipeline = ch.pipeline();
+                        pipeline.addLast("decoder", new ProtobufDecoder())
+                                .addLast("encoder", new ProtobufEncoder());
                     }
                 });
     }

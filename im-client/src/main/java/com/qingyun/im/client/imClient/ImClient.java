@@ -5,6 +5,8 @@ import com.qingyun.im.client.command.CommandContext;
 import com.qingyun.im.client.config.AttributeConfig;
 import com.qingyun.im.client.pojo.UserInfo;
 import com.qingyun.im.client.task.CommandScan;
+import com.qingyun.im.common.codec.ProtobufDecoder;
+import com.qingyun.im.common.codec.ProtobufEncoder;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.exception.IMRuntimeException;
@@ -83,8 +85,11 @@ public class ImClient {
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
+                    protected void initChannel(SocketChannel ch) throws Exception {
                         //  TODO：添加handle
+                        ChannelPipeline pipeline = ch.pipeline();
+                        pipeline.addLast("decoder", new ProtobufDecoder())
+                                .addLast("encoder", new ProtobufEncoder());
                     }
                 });
     }

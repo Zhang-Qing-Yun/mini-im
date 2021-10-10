@@ -1,0 +1,25 @@
+syntax = "proto3";
+option optimize_for = SPEED;  // 加快解析
+option java_outer_classname = "ProtoMsg";  // 外部类名
+
+message Message {
+    enum Type {
+        PingType = 0;
+        PongType = 1;
+        NotificationType = 2;
+    }
+
+
+    //  消息类型
+    Type type = 1;
+    string sessionId = 2;
+    int64 sequence = 3;
+
+    oneof body {
+        Notification notification = 4;
+    }
+}
+
+message Notification {
+    string json = 1;
+}

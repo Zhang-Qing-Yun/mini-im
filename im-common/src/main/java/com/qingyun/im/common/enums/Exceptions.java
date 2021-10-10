@@ -25,7 +25,8 @@ public enum Exceptions {
     GET_ASK(2007, "获取用户的好友请求列表失败"),
     ZK_NODE(3000, "操作Zookeeper结点时出错"),
     ZK_LISTENER(3001, "设置ZK监听器时出错"),
-    ADDR_ERROR(4000, "地址出错");
+    ADDR_ERROR(4000, "地址出错"),
+    NO_MESSAGE(4001, "不识别的消息");
 
     private final int code;
     private final String message;

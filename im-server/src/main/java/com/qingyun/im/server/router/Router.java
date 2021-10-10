@@ -1,5 +1,7 @@
 package com.qingyun.im.server.router;
 
+import com.qingyun.im.common.codec.ProtobufDecoder;
+import com.qingyun.im.common.codec.ProtobufEncoder;
 import com.qingyun.im.common.entity.Notification;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.exception.IMException;
@@ -66,8 +68,11 @@ public class Router {
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
+                    protected void initChannel(SocketChannel ch) throws Exception {
                         //  TODO：添加handle
+                        ChannelPipeline pipeline = ch.pipeline();
+                        pipeline.addLast("decoder", new ProtobufDecoder())
+                                .addLast("encoder", new ProtobufEncoder());
                     }
                 });
     }
