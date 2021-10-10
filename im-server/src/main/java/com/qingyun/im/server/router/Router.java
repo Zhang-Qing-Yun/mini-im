@@ -1,12 +1,16 @@
 package com.qingyun.im.server.router;
 
+import com.alibaba.fastjson.JSON;
 import com.qingyun.im.common.codec.ProtobufDecoder;
 import com.qingyun.im.common.codec.ProtobufEncoder;
 import com.qingyun.im.common.entity.Notification;
+import com.qingyun.im.common.entity.ProtoMsg;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.server.config.AttributeConfig;
 import com.qingyun.im.server.entity.ImNode;
+import com.qingyun.im.server.handle.NotificationHandler;
+import com.qingyun.im.server.protoBuilder.NotificationMsgBuilder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -46,6 +50,9 @@ public class Router {
     @Autowired
     private ImWorker imWorker;
 
+    @Autowired
+    private NotificationHandler notificationHandler;
+
 
     /**
      * 执行初始化操作
@@ -72,7 +79,8 @@ public class Router {
                         //  TODO：添加handle
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast("decoder", new ProtobufDecoder())
-                                .addLast("encoder", new ProtobufEncoder());
+                                .addLast("encoder", new ProtobufEncoder())
+                                .addLast("notificationHandler", notificationHandler);
                     }
                 });
     }
@@ -110,12 +118,38 @@ public class Router {
     }
 
     /**
-     * 向Server发送连接成功通知
+     * 向Server发送连接成功通知（CONNECT_FINISHED）
      */
     public void sendConnectNotification() {
-        Notification<ImNode> notification = new Notification<>(imWorker.getImNode());
-        notification.setType(Notification.CONNECT_FINISHED);
-        //  TODO：发送连接成功通知
+        Notification<ImNode> notification = new Notification<>(Notification.CONNECT_FINISHED, imWorker.getImNode());
+        sendNotification(notification);
+    }
+
+    /**
+     * 发送连接成功的应答通知（CONNECT_ACK）
+     */
+    public void sendConnectAckNotification() {
+        Notification<ImNode> notification = new Notification<>(Notification.CONNECT_ACK, imWorker.getImNode());
+        sendNotification(notification);
+    }
+
+    /**
+     * 发送ACK_ACK
+     */
+    public void sendAckAckNotification() {
+        Notification<ImNode> notification = new Notification<>(Notification.ACK_ACK, imWorker.getImNode());
+        sendNotification(notification);
+    }
+
+    /**
+     * 发送通知消息
+     */
+    public <T> void sendNotification(Notification<T> notification) {
+        String json = JSON.toJSONString(notification);
+        //  构建通知消息
+        ProtoMsg.Message pkg = NotificationMsgBuilder.buildNotification(json);
+        //  发送消息
+        writeAndFlush(pkg);
     }
 
     /**
@@ -126,5 +160,20 @@ public class Router {
             return;
         }
         channel.writeAndFlush(pkg);
+    }
+
+    /**
+     * 关闭与Server的连接
+     */
+    public void stopConnecting() {
+        group.shutdownGracefully();
+        remoteNode = null;
+        if (channel != null) {
+            channel = null;
+        }
+    }
+
+    public ImNode getRemoteNode() {
+        return remoteNode;
     }
 }

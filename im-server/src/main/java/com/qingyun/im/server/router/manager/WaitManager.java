@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @Component
 public class WaitManager {
     //  要等待的结点的集合
-    private CopyOnWriteArraySet<String> waitNodes;
+    private CopyOnWriteArraySet<Long> waitNodes;
 
     //  锁
     private final Object o = new Object();
@@ -20,22 +20,22 @@ public class WaitManager {
     //  是否可以放行
     private boolean canGo = false;
 
-    public void init(CopyOnWriteArraySet<String> waitNodes) {
+    public void init(CopyOnWriteArraySet<Long> waitNodes) {
         this.waitNodes = waitNodes;
     }
 
     /**
      * 增加一个等待节点
      */
-    public void increase(String path) {
-        waitNodes.add(path);
+    public void increase(Long id) {
+        waitNodes.add(id);
     }
 
     /**
      * 取消一个等待结点
      */
-    public void decrease(String path) {
-        waitNodes.remove(path);
+    public void decrease(Long id) {
+        waitNodes.remove(id);
         //  当等待集合为空时放行
         if (waitNodes.isEmpty()) {
             letGo();

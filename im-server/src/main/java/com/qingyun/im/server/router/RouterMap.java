@@ -11,7 +11,11 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 @Component
 public class RouterMap {
-    private ConcurrentHashMap<Long, Router> routerMap = new ConcurrentHashMap<>();
+    //  转发表
+    private final ConcurrentHashMap<Long, Router> routerMap = new ConcurrentHashMap<>();
+    //  正处于结点互联建立状态中的转发器集合
+    private final ConcurrentHashMap<Long, Router> candidateMap = new ConcurrentHashMap<>();
+
 
     /**
      * 向转发表中添加一条记录
@@ -29,5 +33,43 @@ public class RouterMap {
      */
     public void removeRouter(long id, Router router) {
         routerMap.remove(id);
+    }
+
+    /**
+     * 从转发表中根据结点的id（由ZK生成的）获取对应的转发器
+     * @param nodeId id
+     * @return 转发器
+     */
+    public Router getRouterByNodeId(long nodeId) {
+        return routerMap.get(nodeId);
+    }
+
+    /**
+     * 添加一个正处于节点互联建立过程中的转发器
+     * @param nodeId 远程结点id
+     * @param router 转发器
+     */
+    public void addCandidate(long nodeId, Router router) {
+        candidateMap.put(nodeId, router);
+    }
+
+    /**
+     * 将一个位于candidateMap中的元素转移到routerMap中
+     * @param nodeId key
+     */
+    public synchronized void toFullRouter(long nodeId) {
+        Router router = candidateMap.remove(nodeId);
+        if (router == null) {
+            return;
+        }
+        routerMap.put(nodeId, router);
+    }
+
+    /**
+     * 删除一个正在建立中的router
+     * @param nodeId 该router对应的结点的id
+     */
+    public void removeCandidate(long nodeId) {
+        candidateMap.remove(nodeId);
     }
 }

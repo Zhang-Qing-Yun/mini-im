@@ -9,6 +9,7 @@ import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.exception.IMRuntimeException;
 import com.qingyun.im.common.util.IOUtil;
 import com.qingyun.im.server.config.AttributeConfig;
+import com.qingyun.im.server.handle.NotificationHandler;
 import com.qingyun.im.server.router.ImWorker;
 import com.qingyun.im.server.router.manager.WaitManager;
 import com.qingyun.im.server.router.zk.CuratorZKClient;
@@ -57,6 +58,9 @@ public class ImServer {
     @Autowired
     private WaitManager waitManager;
 
+    @Autowired
+    private NotificationHandler notificationHandler;
+
 
     public ImServer() {
         ip = IOUtil.getHostAddress();
@@ -79,7 +83,8 @@ public class ImServer {
                         //  TODO:添加handle
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast("decoder", new ProtobufDecoder())
-                                .addLast("encoder", new ProtobufEncoder());
+                                .addLast("encoder", new ProtobufEncoder())
+                                .addLast("notificationHandler", notificationHandler);
                     }
                 });
     }
@@ -100,8 +105,8 @@ public class ImServer {
             imWorker.init();
             //  4.开始监听集群变化，即监听Zk结点的变化
             listener.setListener();
-            //  TODO：5.阻塞，直到与所有的Server都建立了双向连接为止
-            waitManager.init(new CopyOnWriteArraySet<>(children));
+            //  5.阻塞，直到与所有的Server都建立了双向连接为止
+            waitManager.init(getWaitNodesByPaths(children));
             waitManager.await(attribute.getMaxStartTime());
             //  判断是否是超时退出
             if (!waitManager.isCanGo()) {
@@ -123,5 +128,18 @@ public class ImServer {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    /**
+     * 根据结点路径的集合获取要等待的结点
+     * @param paths 路径集合
+     * @return 要等待的结点的集合
+     */
+    private CopyOnWriteArraySet<Long> getWaitNodesByPaths(List<String> paths) {
+        CopyOnWriteArraySet<Long> waitNodes = new CopyOnWriteArraySet<>();
+        for (String path: paths) {
+            waitNodes.add(imWorker.getIdByPath(path));
+        }
+        return waitNodes;
     }
 }

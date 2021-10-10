@@ -14,4 +14,12 @@ public class ServerInfo {
 
     //  Netty端口
     private int port;
+
+    public ServerInfo() {
+    }
+
+    public ServerInfo(String ip, int port) {
+        this.ip = ip;
+        this.port = port;
+    }
 }
