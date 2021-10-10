@@ -2,7 +2,7 @@ package com.qingyun.im.auth.controller;
 
 
 import com.qingyun.im.auth.service.RelationService;
-import com.qingyun.im.common.vo.R;
+import com.qingyun.im.common.entity.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

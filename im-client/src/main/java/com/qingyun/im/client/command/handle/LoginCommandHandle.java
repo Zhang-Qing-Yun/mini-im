@@ -6,7 +6,7 @@ import com.qingyun.im.client.command.Command;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.util.HttpClient;
-import com.qingyun.im.common.vo.R;
+import com.qingyun.im.common.entity.R;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;

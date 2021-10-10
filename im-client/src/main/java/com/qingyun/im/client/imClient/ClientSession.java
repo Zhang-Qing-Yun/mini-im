@@ -1,7 +1,7 @@
 package com.qingyun.im.client.imClient;
 
 import com.qingyun.im.client.pojo.UserInfo;
-import com.qingyun.im.common.vo.ServerInfo;
+import com.qingyun.im.common.entity.ServerInfo;
 import io.netty.channel.Channel;
 import lombok.Data;
 import org.springframework.stereotype.Component;

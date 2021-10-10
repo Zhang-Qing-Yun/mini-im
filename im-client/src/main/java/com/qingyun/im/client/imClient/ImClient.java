@@ -77,7 +77,7 @@ public class ImClient {
      * 初始化Bootstrap
      */
     private void initBootstrap() {
-        Bootstrap b = new Bootstrap();
+        b = new Bootstrap();
         b.group(group).channel(NioSocketChannel.class)
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)

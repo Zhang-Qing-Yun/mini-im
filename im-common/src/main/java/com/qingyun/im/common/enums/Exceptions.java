@@ -22,7 +22,10 @@ public enum Exceptions {
     START_FAIL(2004, "启动失败"),
     ASK_FRIEND_ERROR(2005, "发送好友请求失败"),
     ACK_FRIEND_ERROR(2006, "同意好友请求失败"),
-    GET_ASK(2007, "获取用户的好友请求列表失败");
+    GET_ASK(2007, "获取用户的好友请求列表失败"),
+    ZK_NODE(3000, "操作Zookeeper结点时出错"),
+    ZK_LISTENER(3001, "设置ZK监听器时出错"),
+    ADDR_ERROR(4000, "地址出错");
 
     private final int code;
     private final String message;
