@@ -33,9 +33,13 @@ public class WaitManager {
 
     /**
      * 取消一个等待结点
+     * @param id 要取消的结点id。如果该结点不在等待集合当中，不做任何操作！
      */
-    public void decrease(Long id) {
-        waitNodes.remove(id);
+    public synchronized void decrease(Long id) {
+        boolean ok = waitNodes.remove(id);
+        if (!ok) {
+            return;
+        }
         //  当等待集合为空时放行
         if (waitNodes.isEmpty()) {
             letGo();

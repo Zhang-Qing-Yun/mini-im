@@ -37,12 +37,12 @@ public class AddedAction implements EventAction {
         remoteNode.setId(remoteId);
 
         //  判断是否为当前结点
-        if (remoteNode.equals(getLocalNode())) {
+        if (remoteNode.equals(EventAction.getLocalNode(imWorker))) {
             return;
         }
         //  判断是否已经处理过了
         Router router = routerMap.getRouterByNodeId(remoteId);
-        if (router != null && router.getRemoteNode().equals(getLocalNode())) {
+        if (router != null && router.getRemoteNode().equals(EventAction.getLocalNode(imWorker))) {
             return;
         }
         doAfterAdd(remoteNode, router);
@@ -74,13 +74,5 @@ public class AddedAction implements EventAction {
         router.sendConnectNotification();
         //  将该router保存起来
         routerMap.addCandidate(remoteNode.getId(), router);
-    }
-
-    /**
-     * 获取当前结点的信息
-     * @return 当前结点信息
-     */
-    public ImNode getLocalNode() {
-        return imWorker.getImNode();
     }
 }

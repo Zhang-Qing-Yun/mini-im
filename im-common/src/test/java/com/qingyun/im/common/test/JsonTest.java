@@ -6,6 +6,8 @@ import com.qingyun.im.common.entity.Notification;
 import com.qingyun.im.common.entity.ServerInfo;
 import org.junit.Test;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * @description：
  * @author: 張青云
@@ -19,5 +21,11 @@ public class JsonTest {
         Notification<ServerInfo> object = JSON.parseObject(json, new TypeReference<Notification<ServerInfo>>(){});
         System.out.println(object.getData());
         System.out.println(object.getData().getClass());
+    }
+
+    @Test
+    public void mapTest() {
+        ConcurrentHashMap<Long, Long> map = new ConcurrentHashMap<>();
+        System.out.println(map.remove(1L));
     }
 }

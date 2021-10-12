@@ -29,9 +29,8 @@ public class RouterMap {
     /**
      * 从转发表中删除一条记录
      * @param id Server的id
-     * @param router 转发器
      */
-    public void removeRouter(long id, Router router) {
+    public void removeRouter(long id) {
         routerMap.remove(id);
     }
 

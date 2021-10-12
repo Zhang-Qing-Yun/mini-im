@@ -68,7 +68,7 @@ public class CuratorZKClient {
         if (!isInit) {
             init();
         }
-        return this.client;
+        return client;
     }
 
     /**

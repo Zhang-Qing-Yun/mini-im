@@ -112,18 +112,18 @@ public class ImServer {
             if (!waitManager.isCanGo()) {
                 throw new IMException(Exceptions.START_FAIL.getCode(), Exceptions.START_FAIL.getMessage());
             }
-
-            //  TODO：注册该Server下线时的钩子函数(清除在路由层的信息等操作)
-
-            //  更新ZK结点的状态为可用，可以接收客户端连接了
+            //  6.注册该Server下线时的钩子函数，执行一些关闭前的操作
+            Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownTask()));
+            //  7.更新ZK结点的状态为可用，可以接收客户端连接了
             imWorker.getImNode().setReady(true);
             curatorZKClient.setNodeData(imWorker.getPathRegistered(), JSON.toJSONBytes(imWorker.getImNode()));
-            //  等待服务端监听端口关闭
+            //  8.等待服务端监听端口关闭
             future.channel().closeFuture().sync();
         } catch (Exception e) {
-            //  TODO；没有启动成功则删除一切痕迹
             throw new IMRuntimeException(Exceptions.START_FAIL.getCode(), Exceptions.START_FAIL.getMessage());
         } finally {
+            //  关闭与ZK的连接（会删除临时结点），这时其它结点会监听到该结点下线，更新其路由表
+            curatorZKClient.closeConnection();
             //  关闭线程组
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
@@ -141,5 +141,21 @@ public class ImServer {
             waitNodes.add(imWorker.getIdByPath(path));
         }
         return waitNodes;
+    }
+
+
+    /**
+     * Netty Server下线时的操作
+     */
+    final class ShutdownTask implements Runnable {
+
+        @Override
+        public void run() {
+            //  关闭与ZK的连接（会删除临时结点），这时其它结点会监听到该结点下线，更新其路由表
+            curatorZKClient.closeConnection();
+            //  关闭线程组
+            bossGroup.shutdownGracefully();
+            workerGroup.shutdownGracefully();
+        }
     }
 }

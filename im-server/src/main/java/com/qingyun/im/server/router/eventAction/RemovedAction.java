@@ -1,6 +1,13 @@
 package com.qingyun.im.server.router.eventAction;
 
+import com.alibaba.fastjson.JSON;
+import com.qingyun.im.server.entity.ImNode;
+import com.qingyun.im.server.router.ImWorker;
+import com.qingyun.im.server.router.Router;
+import com.qingyun.im.server.router.RouterMap;
+import com.qingyun.im.server.router.manager.WaitManager;
 import org.apache.curator.framework.recipes.cache.ChildData;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,8 +17,50 @@ import org.springframework.stereotype.Component;
  **/
 @Component("removedAction")
 public class RemovedAction implements EventAction{
+    @Autowired
+    private WaitManager waitManager;
+
+    @Autowired
+    private RouterMap routerMap;
+
+    @Autowired
+    private ImWorker imWorker;
+
+
     @Override
     public void action(ChildData data) {
+        //  获取下线结点的信息
+        byte[] payload = data.getData();
+        ImNode remoteNode = JSON.parseObject(payload, ImNode.class);
+        long remoteId = imWorker.getIdByPath(data.getPath());
+        remoteNode.setId(remoteId);
 
+        //  判断是否为当前结点
+        ImNode localNode = EventAction.getLocalNode(imWorker);
+        if (remoteNode.equals(localNode)) {
+            return;
+        }
+        //  判断当前结点是否在建立互联的过程中
+        if (!localNode.isReady()) {
+            routerMap.removeCandidate(remoteId);
+            waitManager.decrease(remoteId);
+        }
+        doAfterRemove(remoteNode);
+    }
+
+    /**
+     * 检测到结点下线时的具体逻辑
+     * @param remoteNode 下线结点
+     */
+    private void doAfterRemove(ImNode remoteNode) {
+        long id = remoteNode.getId();
+        //  获取与该结点的转发器
+        Router router = routerMap.getRouterByNodeId(id);
+        if (router != null) {
+            //  关闭与该远程结点的连接
+            router.stopConnecting();
+            //  更新转发表
+            routerMap.removeRouter(id);
+        }
     }
 }
