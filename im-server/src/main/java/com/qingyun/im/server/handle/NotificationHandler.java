@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.qingyun.im.common.entity.Notification;
 import com.qingyun.im.common.entity.ProtoMsg;
-import com.qingyun.im.server.entity.ImNode;
+import com.qingyun.im.common.entity.ImNode;
 import com.qingyun.im.server.router.Router;
 import com.qingyun.im.server.router.RouterMap;
 import com.qingyun.im.server.router.manager.WaitManager;

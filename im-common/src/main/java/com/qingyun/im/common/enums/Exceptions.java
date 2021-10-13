@@ -15,6 +15,11 @@ public enum Exceptions {
     NO_COMMAND(1000, "没有该命令"),
     PARSE_ERROR(1001, "命令解析时出错"),
     NO_LOGIN(1002, "当前没有登录"),
+    NO_SERVER(1003, "没有可用服务器"),
+    NO_CONNECT(1004, "当前没有与服务器连接"),
+    SEND_MESSAGE_ERROR(1005, "发送消息失败"),
+    CONCURRENT_ERROR(1006, "并发错误"),
+    INTERRUPT(1007, "异常中断"),
     HTTP_ERROR(2000, "发送HTTP请求时出错"),
     LOGIN_ERROR(2001, "登录失败"),
     REGISTER_ERROR(2002, "注册失败"),
@@ -25,6 +30,7 @@ public enum Exceptions {
     GET_ASK(2007, "获取用户的好友请求列表失败"),
     ZK_NODE(3000, "操作Zookeeper结点时出错"),
     ZK_LISTENER(3001, "设置ZK监听器时出错"),
+    ZK_READ_ERROR(3002, "读取ZK结点出错"),
     ADDR_ERROR(4000, "地址出错"),
     NO_MESSAGE(4001, "不识别的消息");
 

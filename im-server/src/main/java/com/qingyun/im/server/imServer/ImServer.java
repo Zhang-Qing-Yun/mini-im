@@ -5,14 +5,16 @@ import com.qingyun.im.common.codec.ProtobufDecoder;
 import com.qingyun.im.common.codec.ProtobufEncoder;
 import com.qingyun.im.common.constants.ServerConstants;
 import com.qingyun.im.common.enums.Exceptions;
+import com.qingyun.im.common.enums.IDGeneratorType;
 import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.exception.IMRuntimeException;
 import com.qingyun.im.common.util.IOUtil;
 import com.qingyun.im.server.config.AttributeConfig;
 import com.qingyun.im.server.handle.NotificationHandler;
+import com.qingyun.im.server.handle.ShakeHandReqHandle;
 import com.qingyun.im.server.router.ImWorker;
 import com.qingyun.im.server.router.manager.WaitManager;
-import com.qingyun.im.server.router.zk.CuratorZKClient;
+import com.qingyun.im.common.zk.CuratorZKClient;
 import com.qingyun.im.server.router.zk.ZKListener;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -25,7 +27,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * @description： NettyServer
@@ -34,6 +35,9 @@ import java.util.concurrent.CountDownLatch;
  **/
 @Component
 public class ImServer {
+    //  分布式id生成策略
+    private int idGeneratorType = IDGeneratorType.UUID.getType();
+
     //  线程组
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
@@ -61,6 +65,9 @@ public class ImServer {
     @Autowired
     private NotificationHandler notificationHandler;
 
+    @Autowired
+    private ShakeHandReqHandle handReqHandle;
+
 
     public ImServer() {
         ip = IOUtil.getHostAddress();
@@ -84,7 +91,8 @@ public class ImServer {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast("decoder", new ProtobufDecoder())
                                 .addLast("encoder", new ProtobufEncoder())
-                                .addLast("notificationHandler", notificationHandler);
+                                .addLast("notificationHandler", notificationHandler)
+                                .addLast("handReqHandle", handReqHandle);
                     }
                 });
     }
@@ -157,5 +165,13 @@ public class ImServer {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    public int getIdGeneratorType() {
+        return idGeneratorType;
+    }
+
+    public void setIdGeneratorType(int idGeneratorType) {
+        this.idGeneratorType = idGeneratorType;
     }
 }

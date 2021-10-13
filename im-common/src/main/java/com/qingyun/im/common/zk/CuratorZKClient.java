@@ -1,6 +1,7 @@
-package com.qingyun.im.server.router.zk;
+package com.qingyun.im.common.zk;
 
 import com.qingyun.im.common.enums.Exceptions;
+import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.exception.IMRuntimeException;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -163,6 +164,23 @@ public class CuratorZKClient {
             client.setData().forPath(path, payload);
         } catch (Exception e) {
             throw new IMRuntimeException(Exceptions.ZK_NODE.getCode(), Exceptions.ZK_NODE.getMessage());
+        }
+    }
+
+    /**
+     * 读取指定结点路径的数据
+     * @param path 结点路径
+     * @return 结点数据，如果路径不存在则返回null
+     * @throws IMException 读取出错
+     */
+    public byte[] getNodeData(String path) throws IMException {
+        if (!isNodeExist(path)) {
+            return null;
+        }
+        try {
+            return client.getData().forPath(path);
+        } catch (Exception e) {
+            throw new IMException(Exceptions.ZK_READ_ERROR.getCode(), Exceptions.ZK_READ_ERROR.getMessage());
         }
     }
 

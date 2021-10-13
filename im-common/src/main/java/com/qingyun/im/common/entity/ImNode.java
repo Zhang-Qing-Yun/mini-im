@@ -1,4 +1,4 @@
-package com.qingyun.im.server.entity;
+package com.qingyun.im.common.entity;
 
 import lombok.Data;
 

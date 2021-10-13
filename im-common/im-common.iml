@@ -17,6 +17,13 @@
     <orderEntry type="library" name="Maven: com.squareup.okio:okio:1.8.0" level="project" />
     <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.28" level="project" />
     <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:3.6.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:17.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.zookeeper:zookeeper:3.4.8" level="project" />
+    <orderEntry type="library" name="Maven: jline:jline:0.9.94" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty:3.7.0.Final" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.curator:curator-client:4.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.curator:curator-recipes:4.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.curator:curator-framework:4.0.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.12" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:2.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest:2.1" level="project" />

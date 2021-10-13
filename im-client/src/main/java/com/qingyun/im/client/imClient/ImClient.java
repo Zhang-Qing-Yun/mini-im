@@ -3,11 +3,16 @@ package com.qingyun.im.client.imClient;
 import com.qingyun.im.client.command.Command;
 import com.qingyun.im.client.command.CommandContext;
 import com.qingyun.im.client.config.AttributeConfig;
+import com.qingyun.im.client.handle.ShakeHandRespHandle;
 import com.qingyun.im.client.pojo.UserInfo;
+import com.qingyun.im.client.protoBuilder.ShakeHandReqMsgBuilder;
+import com.qingyun.im.client.sender.ShakeHandSender;
 import com.qingyun.im.client.task.CommandScan;
 import com.qingyun.im.common.codec.ProtobufDecoder;
 import com.qingyun.im.common.codec.ProtobufEncoder;
+import com.qingyun.im.common.entity.ProtoMsg;
 import com.qingyun.im.common.enums.Exceptions;
+import com.qingyun.im.common.enums.LoadBalancerType;
 import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.exception.IMRuntimeException;
 import io.netty.bootstrap.Bootstrap;
@@ -46,6 +51,12 @@ public class ImClient {
     //  连接已重试的次数
     private int retryCount = 0;
 
+    //  负载均衡策略，默认使用随机负载均衡策略
+    private int loadBalancerType = LoadBalancerType.RANDOM.getType();
+
+    //  锁
+    private final Object o = new Object();
+
     private EventLoopGroup group;
 
     private Bootstrap b;
@@ -62,10 +73,17 @@ public class ImClient {
     @Autowired
     private AttributeConfig attribute;
 
+    @Autowired
+    private ShakeHandSender handSender;
+
+    @Autowired
+    private ShakeHandRespHandle handRespHandle;
+
 
     public ImClient() {
 
     }
+
 
     @PostConstruct  // 在BeanPostProcessor的前置处理器处被执行
     private void init() {
@@ -89,7 +107,8 @@ public class ImClient {
                         //  TODO：添加handle
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast("decoder", new ProtobufDecoder())
-                                .addLast("encoder", new ProtobufEncoder());
+                                .addLast("encoder", new ProtobufEncoder())
+                                .addLast("handRespHandle", handRespHandle);
                     }
                 });
     }
@@ -106,15 +125,23 @@ public class ImClient {
         session.setLogin(true);
         session.setUserInfo(UserInfo.getInstance());
         //  连接Netty Server
-//        try {
-//            this.channel = doConnect();
-//        } catch (Exception e) {
-//            //  当连接出现问题时,直接退出
-//            System.out.println("无法连接Server!");
-//            throw new IMRuntimeException(Exceptions.CONNECT_ERROR.getCode(), Exceptions.CONNECT_ERROR.getMessage());
-//        }
-//        session.setConnected(true);
-//        session.setChannel(channel);
+        try {
+            this.channel = doConnect();
+        } catch (Exception e) {
+            //  当连接出现问题时,直接退出
+            System.out.println("无法连接Server!");
+            throw new IMRuntimeException(Exceptions.CONNECT_ERROR.getCode(), Exceptions.CONNECT_ERROR.getMessage());
+        }
+        session.setConnected(true);
+        session.setChannel(channel);
+        //  发送握手消息
+        handSender.sendShakeHandMsg();
+        //  阻塞
+        try {
+            await();
+        } catch (InterruptedException e) {
+            throw new IMRuntimeException(Exceptions.INTERRUPT.getCode(), Exceptions.INTERRUPT.getMessage());
+        }
         //  启动命令线程
         commandThread.start();
     }
@@ -171,5 +198,30 @@ public class ImClient {
         });
         //  阻塞,获取channel
         return f.get();
+    }
+
+
+    public int getLoadBalancerType() {
+        return loadBalancerType;
+    }
+
+    public void setLoadBalancerType(int loadBalancerType) {
+        this.loadBalancerType = loadBalancerType;
+    }
+
+    public void setServerIP(String serverIP) {
+        this.serverIP = serverIP;
+    }
+
+    public void setServerPort(int serverPort) {
+        this.serverPort = serverPort;
+    }
+
+    private synchronized void await() throws InterruptedException {
+        o.wait();
+    }
+
+    public synchronized void go() {
+        o.notify();
     }
 }

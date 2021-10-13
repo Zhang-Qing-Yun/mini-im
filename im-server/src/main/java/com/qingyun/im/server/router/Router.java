@@ -8,7 +8,7 @@ import com.qingyun.im.common.entity.ProtoMsg;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.server.config.AttributeConfig;
-import com.qingyun.im.server.entity.ImNode;
+import com.qingyun.im.common.entity.ImNode;
 import com.qingyun.im.server.handle.NotificationHandler;
 import com.qingyun.im.server.protoBuilder.NotificationMsgBuilder;
 import io.netty.bootstrap.Bootstrap;

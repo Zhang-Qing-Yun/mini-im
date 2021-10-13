@@ -34,6 +34,8 @@
         <curator.version>4.0.0</curator.version>
         <zookeeper.version>3.4.8</zookeeper.version>
         <protobuf.version>3.6.1</protobuf.version>
+        <guava.version>17.0</guava.version>
+        <commons-pool2.version>2.6.0</commons-pool2.version>
     </properties>
 
     <dependencyManagement>
@@ -114,6 +116,11 @@
                 <artifactId>protobuf-java</artifactId>
                 <version>${protobuf.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.apache.zookeeper</groupId>
@@ -168,6 +175,12 @@
                 <groupId>org.apache.curator</groupId>
                 <artifactId>curator-recipes</artifactId>
                 <version>${curator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>${commons-pool2.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

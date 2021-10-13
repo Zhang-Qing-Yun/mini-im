@@ -2,11 +2,15 @@ package com.qingyun.im.auth.controller;
 
 
 import com.qingyun.im.auth.service.UserService;
+import com.qingyun.im.auth.service.ZKService;
 import com.qingyun.im.auth.vo.User;
+import com.qingyun.im.common.entity.ImNode;
 import com.qingyun.im.common.enums.ResultType;
 import com.qingyun.im.common.entity.R;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -22,6 +26,10 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ZKService zkService;
+
 
     @PostMapping("/register")
     public R register(@RequestBody User user) {
@@ -40,8 +48,9 @@ public class UserController {
                     .code(ResultType.LOGIN_FAIL.getCode())
                     .message(ResultType.LOGIN_FAIL.getMsg());
         }
-        //  TODO：返回NettyServer的信息
-        return R.ok();
+        //  返回NettyServer的信息
+        List<ImNode> imNodes = zkService.getAllNode();
+        return R.ok().data("imNodes", imNodes);
     }
 
 }

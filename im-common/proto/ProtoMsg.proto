@@ -7,6 +7,8 @@ message Message {
         PingType = 0;
         PongType = 1;
         NotificationType = 2;
+        ShakeHandReqType = 3;
+        ShakeHandRespType = 4;
     }
 
 
@@ -17,9 +19,19 @@ message Message {
 
     oneof body {
         Notification notification = 4;
+        ShakeHandReq shakeHandReq = 5;
+        ShakeHandResp shakeHandResp = 6;
     }
 }
 
 message Notification {
     string json = 1;
+}
+
+message ShakeHandReq {
+    string username = 1;
+}
+
+message ShakeHandResp {
+
 }

@@ -1,6 +1,6 @@
 package com.qingyun.im.server.config;
 
-import com.qingyun.im.server.router.zk.CuratorZKClient;
+import com.qingyun.im.common.zk.CuratorZKClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

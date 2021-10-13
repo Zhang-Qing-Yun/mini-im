@@ -51,7 +51,7 @@ public class WaitManager {
      * 阻塞
      * @param maxWaitTime 最大等待时间
      */
-    public void await(long maxWaitTime) throws InterruptedException {
+    public synchronized void await(long maxWaitTime) throws InterruptedException {
         o.wait(maxWaitTime);
     }
 

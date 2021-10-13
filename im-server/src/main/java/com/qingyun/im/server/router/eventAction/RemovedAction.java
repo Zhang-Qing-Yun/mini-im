@@ -1,7 +1,7 @@
 package com.qingyun.im.server.router.eventAction;
 
 import com.alibaba.fastjson.JSON;
-import com.qingyun.im.server.entity.ImNode;
+import com.qingyun.im.common.entity.ImNode;
 import com.qingyun.im.server.router.ImWorker;
 import com.qingyun.im.server.router.Router;
 import com.qingyun.im.server.router.RouterMap;

@@ -1,6 +1,6 @@
 package com.qingyun.im.server.router.eventAction;
 
-import com.qingyun.im.server.entity.ImNode;
+import com.qingyun.im.common.entity.ImNode;
 import com.qingyun.im.server.router.ImWorker;
 import org.apache.curator.framework.recipes.cache.ChildData;
 

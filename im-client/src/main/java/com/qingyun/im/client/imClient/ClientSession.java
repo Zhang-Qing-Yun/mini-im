@@ -1,8 +1,9 @@
 package com.qingyun.im.client.imClient;
 
 import com.qingyun.im.client.pojo.UserInfo;
-import com.qingyun.im.common.entity.ServerInfo;
+import com.qingyun.im.common.entity.ImNode;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,9 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 public class ClientSession {
+    //  连接的唯一标志
+    private String sessionId;
+
     //  是否已经使用用户名和密码登录
     private boolean isLogin = false;
 
@@ -24,9 +28,17 @@ public class ClientSession {
     private UserInfo userInfo;
 
     //  连接的Netty Server的信息
-    private ServerInfo serverInfo;
+    private ImNode imNode;
 
     //  与Netty Server建立的channel
     private Channel channel;
 
+    /**
+     * 向服务器发送数据
+     * @param pkg 数据
+     * @return 异步Future
+     */
+    public ChannelFuture writeAndFlush(Object pkg) {
+        return channel.writeAndFlush(pkg);
+    }
 }
