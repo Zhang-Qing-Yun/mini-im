@@ -70,7 +70,7 @@ public class GetFriendAskCommandHandle implements CommandHandle{
         R result = JSON.parseObject(response.body().string(), R.class);
         if (!result.getSuccess()) {
             System.out.println(result.getMessage());
-            throw new IMException(Exceptions.GET_ASK.getCode(), Exceptions.GET_ASK.getMessage());
+            throw new IMException(Exceptions.GET_ASK_LIST.getCode(), Exceptions.GET_ASK_LIST.getMessage());
         }
 
         //  用户的好友请求列表

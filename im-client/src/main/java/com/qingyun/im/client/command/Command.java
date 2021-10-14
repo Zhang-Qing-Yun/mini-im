@@ -15,7 +15,8 @@ public enum Command {
     ASK_FRIEND("askFriend", "添加好友  【示例：askFriend username】"),
     ACK_FRIEND("ackFriend", "同意加好友  【示例：ackFriend username】"),
     FRIEND_ASK("getFriendAsk", "查看所有的好友请求  【示例：getFriendAsk】"),
-    ALL_FRIEND("allFriend", "查看好友列表  【示例：allFriend】");
+    ALL_FRIEND("allFriend", "查看好友列表  【示例：allFriend】"),
+    SEND_MSG("send", "发送消息给好友  【示例：send username message】");
 
 
     //  命令的关键字，只能是一个单词

@@ -19,4 +19,8 @@ public class AttributeConfig {
     //  两次重连的时间间隔,单位毫秒
     @Value("${im.client.retryInterval:1000}")
     private long retryInterval;
+
+    //  单次发送消息的最大字符长度
+    @Value("${im.client.messageMaxSize:500}")
+    private int messageMaxSize;
 }

@@ -9,6 +9,7 @@ message Message {
         NotificationType = 2;
         ShakeHandReqType = 3;
         ShakeHandRespType = 4;
+        MsgType = 5;
     }
 
 
@@ -21,6 +22,7 @@ message Message {
         Notification notification = 4;
         ShakeHandReq shakeHandReq = 5;
         ShakeHandResp shakeHandResp = 6;
+        Msg msg = 7;
     }
 }
 
@@ -34,4 +36,10 @@ message ShakeHandReq {
 
 message ShakeHandResp {
 
+}
+
+message Msg {
+    string from = 1;
+    string to = 2;
+    string context = 3;
 }

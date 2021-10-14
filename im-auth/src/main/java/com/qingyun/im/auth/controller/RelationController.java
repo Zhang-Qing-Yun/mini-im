@@ -28,6 +28,7 @@ public class RelationController {
 
     @GetMapping("/getFriendAsk")
     public R getFriendAsk(String username) {
+        //  好友请求列表
         List<String> friendAsk = relationService.getFriendAsk(username);
         return R.ok().data("friendAsk", friendAsk);
     }
@@ -36,7 +37,9 @@ public class RelationController {
     public R askFriend(String username1, String username2) {
         boolean result = relationService.askFriend(username1, username2);
         if (result) {
-            return R.ok();
+            //  当前的好友列表
+            List<String> friendList = relationService.getFriendList(username1);
+            return R.ok().data("friendList", friendList);
         }
         return R.error();
     }
@@ -45,7 +48,9 @@ public class RelationController {
     public R ackFriend(String username1, String username2) {
         boolean result = relationService.ackFriend(username1, username2);
         if (result) {
-            return R.ok();
+            //  当前的好友列表
+            List<String> friendList = relationService.getFriendList(username1);
+            return R.ok().data("friendList", friendList);
         }
         return R.error();
     }

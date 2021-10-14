@@ -1,30 +1,38 @@
 package com.qingyun.im.client.imClient;
 
+import com.alibaba.fastjson.JSON;
 import com.qingyun.im.client.command.Command;
 import com.qingyun.im.client.command.CommandContext;
+import com.qingyun.im.client.command.handle.SendMsgHandle;
 import com.qingyun.im.client.config.AttributeConfig;
 import com.qingyun.im.client.handle.ShakeHandRespHandle;
 import com.qingyun.im.client.pojo.UserInfo;
-import com.qingyun.im.client.protoBuilder.ShakeHandReqMsgBuilder;
 import com.qingyun.im.client.sender.ShakeHandSender;
 import com.qingyun.im.client.task.CommandScan;
 import com.qingyun.im.common.codec.ProtobufDecoder;
 import com.qingyun.im.common.codec.ProtobufEncoder;
-import com.qingyun.im.common.entity.ProtoMsg;
+import com.qingyun.im.common.entity.R;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.enums.LoadBalancerType;
 import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.exception.IMRuntimeException;
+import com.qingyun.im.common.util.HttpClient;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -61,6 +69,12 @@ public class ImClient {
 
     private Bootstrap b;
 
+    @Value("${auth.address}")
+    private String authAddress;
+
+    @Value("${auth.getFriendListUrl}")
+    private String getFriendListUrl;
+
     @Autowired
     private CommandScan commandScan;
 
@@ -78,6 +92,12 @@ public class ImClient {
 
     @Autowired
     private ShakeHandRespHandle handRespHandle;
+
+    @Autowired
+    private OkHttpClient okHttpClient;
+
+    @Autowired
+    private FriendList friendList;
 
 
     public ImClient() {
@@ -124,6 +144,13 @@ public class ImClient {
         //  设置ClientSession
         session.setLogin(true);
         session.setUserInfo(UserInfo.getInstance());
+        //  加载好友列表
+        try {
+            List<String> list = getFriendList();
+            friendList.initFriendList(list);
+        } catch (Exception e) {
+            throw new IMRuntimeException(Exceptions.GET_FRIEND_LIST.getCode(), Exceptions.GET_FRIEND_LIST.getMessage());
+        }
         //  连接Netty Server
         try {
             this.channel = doConnect();
@@ -198,6 +225,29 @@ public class ImClient {
         });
         //  阻塞,获取channel
         return f.get();
+    }
+
+    /**
+     * 获取好友列表
+     * @return 好友列表
+     */
+    protected List<String> getFriendList() throws Exception{
+        //  获取当前登录用户
+        String username = session.getUserInfo().getUsername();
+        //  发HTTP请求登录的过程
+        String url = authAddress + getFriendListUrl;
+        Map<String, String> param = new HashMap<>();
+        param.put("username", username);
+        Response response = HttpClient.get(okHttpClient, param, url);
+        //  解析结果
+        R result = JSON.parseObject(response.body().string(), R.class);
+        if (!result.getSuccess()) {
+            System.out.println(result.getMessage());
+            throw new IMException(Exceptions.GET_FRIEND_LIST.getCode(), Exceptions.GET_FRIEND_LIST.getMessage());
+        }
+
+        //  好友列表
+        return (List<String>) result.getData().get("friendList");
     }
 
 

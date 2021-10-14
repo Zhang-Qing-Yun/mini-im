@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.qingyun.im.client.annotation.LoginRequired;
 import com.qingyun.im.client.command.Command;
 import com.qingyun.im.client.imClient.ClientSession;
+import com.qingyun.im.client.imClient.FriendList;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.util.HttpClient;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +38,9 @@ public class AskFriendCommandHandle implements CommandHandle{
 
     @Autowired
     private ClientSession session;
+
+    @Autowired
+    private FriendList friendList;
 
 
     @Override
@@ -76,6 +81,9 @@ public class AskFriendCommandHandle implements CommandHandle{
             System.out.println(result.getMessage());
             throw new IMException(Exceptions.ASK_FRIEND_ERROR.getCode(), Exceptions.ASK_FRIEND_ERROR.getMessage());
         }
+
+        //  更新本地好友列表
+        friendList.initFriendList((List<String>) result.getData().get("friendList"));
 
         System.out.println("已向" + username2 + "发送好友请求！");
     }
