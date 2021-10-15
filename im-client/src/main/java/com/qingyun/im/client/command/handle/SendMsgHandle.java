@@ -5,6 +5,7 @@ import com.qingyun.im.client.command.Command;
 import com.qingyun.im.client.config.AttributeConfig;
 import com.qingyun.im.client.imClient.ClientSession;
 import com.qingyun.im.client.imClient.FriendList;
+import com.qingyun.im.client.sender.ChatSender;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.exception.IMException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class SendMsgHandle implements CommandHandle {
 
     @Autowired
     private AttributeConfig attribute;
+
+    @Autowired
+    private ChatSender chatSender;
 
 
     @Override
@@ -67,6 +71,6 @@ public class SendMsgHandle implements CommandHandle {
         }
 
         //  发送消息
-
+        chatSender.sendChatMsg(toUsername, context);
     }
 }

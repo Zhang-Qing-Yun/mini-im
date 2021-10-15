@@ -21,4 +21,9 @@ public interface ServerSession {
      * 获取sessionId
      */
     String getSessionId();
+
+    /**
+     * 连接是否可用
+     */
+    boolean isActive();
 }

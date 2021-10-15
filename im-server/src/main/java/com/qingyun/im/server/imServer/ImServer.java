@@ -10,6 +10,7 @@ import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.exception.IMRuntimeException;
 import com.qingyun.im.common.util.IOUtil;
 import com.qingyun.im.server.config.AttributeConfig;
+import com.qingyun.im.server.handle.ChatMsgHandle;
 import com.qingyun.im.server.handle.NotificationHandler;
 import com.qingyun.im.server.handle.ShakeHandReqHandle;
 import com.qingyun.im.server.router.ImWorker;
@@ -68,6 +69,9 @@ public class ImServer {
     @Autowired
     private ShakeHandReqHandle handReqHandle;
 
+    @Autowired
+    private ChatMsgHandle chatMsgHandle;
+
 
     public ImServer() {
         ip = IOUtil.getHostAddress();
@@ -92,7 +96,8 @@ public class ImServer {
                         pipeline.addLast("decoder", new ProtobufDecoder())
                                 .addLast("encoder", new ProtobufEncoder())
                                 .addLast("notificationHandler", notificationHandler)
-                                .addLast("handReqHandle", handReqHandle);
+                                .addLast("handReqHandle", handReqHandle)
+                                .addLast("chatMsgHandle", chatMsgHandle);
                     }
                 });
     }

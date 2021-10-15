@@ -37,4 +37,9 @@ public class LocalSession implements ServerSession{
         //  TODO：这里应该考虑性能，防止积压
         channel.writeAndFlush(pkg);
     }
+
+    @Override
+    public boolean isActive() {
+        return channel.isActive();
+    }
 }
