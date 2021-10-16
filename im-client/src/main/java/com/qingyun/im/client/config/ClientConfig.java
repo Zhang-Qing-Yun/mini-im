@@ -1,9 +1,11 @@
 package com.qingyun.im.client.config;
 
+import com.qingyun.im.common.util.ThreadUtil;
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,5 +23,10 @@ public class ClientConfig {
                 .writeTimeout(10,TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true);
         return builder.build();
+    }
+
+    @Bean("ioThreadPool")
+    public ThreadPoolExecutor ioThreadPool() {
+        return ThreadUtil.getIOTargetThreadPool();
     }
 }

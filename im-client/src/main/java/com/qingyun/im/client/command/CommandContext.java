@@ -83,9 +83,13 @@ public class CommandContext implements ApplicationContextAware {
         try {
             handle.process(commandValue);
             return true;
+        } catch(RuntimeException e) {
+            System.out.println(e.getMessage());
+            System.exit(1);
         } catch (Exception e) {
             System.out.println("错误，请重试！" + "提示：" + e.getMessage());
             return false;
         }
+        return false;
     }
 }

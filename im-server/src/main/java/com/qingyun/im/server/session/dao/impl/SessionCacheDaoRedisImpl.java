@@ -1,7 +1,7 @@
 package com.qingyun.im.server.session.dao.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.qingyun.im.common.constants.Prefix;
+import com.qingyun.im.common.constants.RedisPrefix;
 import com.qingyun.im.server.session.dao.SessionCacheDao;
 import com.qingyun.im.server.session.entity.SessionCache;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class SessionCacheDaoRedisImpl implements SessionCacheDao {
 
     @Override
     public void save(SessionCache sessionCache) {
-        String key = Prefix.SESSION_CACHE + sessionCache.getSessionId();
+        String key = RedisPrefix.SESSION_CACHE + sessionCache.getSessionId();
         //  将value序列化成json
         String value = JSON.toJSONString(sessionCache);
         redisTemplate.opsForValue().set(key, value);
@@ -30,7 +30,7 @@ public class SessionCacheDaoRedisImpl implements SessionCacheDao {
 
     @Override
     public SessionCache get(String sessionId) {
-        String value = (String) redisTemplate.opsForValue().get(Prefix.SESSION_CACHE + sessionId);
+        String value = (String) redisTemplate.opsForValue().get(RedisPrefix.SESSION_CACHE + sessionId);
         SessionCache sessionCache = null;
         if (!StringUtils.isEmpty(value)) {
             sessionCache = JSON.parseObject(value, SessionCache.class);
@@ -40,7 +40,7 @@ public class SessionCacheDaoRedisImpl implements SessionCacheDao {
 
     @Override
     public void remove(String sessionId) {
-        String key = Prefix.SESSION_CACHE + sessionId;
+        String key = RedisPrefix.SESSION_CACHE + sessionId;
         redisTemplate.delete(key);
     }
 }

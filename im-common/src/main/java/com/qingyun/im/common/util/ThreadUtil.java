@@ -11,11 +11,18 @@ import java.util.concurrent.TimeUnit;
  * @create: 2021-10-13 10:18
  **/
 public final class ThreadUtil {
+    //  CPU核数
+    private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
+
     //  空闲保活时限，单位秒
     private static final int KEEP_ALIVE_SECONDS = 30;
 
     //  有界队列size
     private static final int QUEUE_SIZE = 10000;
+
+    //  IO密集型线程池参数
+    private static final int IO_MAX = Math.max(2, CPU_COUNT * 2);  // 最大线程数
+    private static final int IO_CORE = 0;  // 核心线程数
 
 
     //  混合型线程池参数
@@ -37,7 +44,33 @@ public final class ThreadUtil {
                 max,
                 KEEP_ALIVE_SECONDS,
                 TimeUnit.SECONDS,
-                new LinkedBlockingQueue(QUEUE_SIZE)
+                new LinkedBlockingQueue(QUEUE_SIZE),
+                new ThreadPoolExecutor.CallerRunsPolicy()
+        );
+        static {
+            EXECUTOR.allowCoreThreadTimeOut(true);
+            //  钩子函数，用来关闭线程池
+            Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    shutdownThreadPoolGracefully(EXECUTOR);
+                }
+            }));
+        }
+    }
+
+    /**
+     * IO密集型线程池
+     */
+    static final class IOTargetThreadPool {
+        //  自定义线程池
+        private static final ThreadPoolExecutor EXECUTOR = new ThreadPoolExecutor(
+                IO_CORE,
+                IO_MAX,
+                KEEP_ALIVE_SECONDS,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue(QUEUE_SIZE),
+                new ThreadPoolExecutor.CallerRunsPolicy()
         );
         static {
             EXECUTOR.allowCoreThreadTimeOut(true);
@@ -59,6 +92,13 @@ public final class ThreadUtil {
         return MixedTargetThreadPool.EXECUTOR;
     }
 
+    /**
+     * 获取执行IO密集型任务的线程池
+     * @return IO密集型任务线程池
+     */
+    public static ThreadPoolExecutor getIOTargetThreadPool() {
+        return IOTargetThreadPool.EXECUTOR;
+    }
 
     /**
      * 关闭线程池

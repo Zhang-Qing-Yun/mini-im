@@ -5,7 +5,7 @@ package com.qingyun.im.common.constants;
  * @author: 張青云
  * @create: 2021-10-13 20:53
  **/
-public interface Prefix {
+public interface RedisPrefix {
 
     //  sessionCache的前缀
     String SESSION_CACHE = "SessionCache:";

@@ -6,7 +6,9 @@ import com.qingyun.im.common.entity.ImNode;
 import com.qingyun.im.common.entity.Notification;
 import org.junit.Test;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * @description：
@@ -25,8 +27,12 @@ public class JsonTest {
 
     @Test
     public void mapTest() {
-        ConcurrentHashMap<Long, Long> map = new ConcurrentHashMap<>();
-        System.out.println(map.remove(1L));
+        LinkedHashMap<String, List<String>> map = new LinkedHashMap<>();
+        ArrayList<String> list1 = new ArrayList<>();
+        ArrayList<String> list2 = new ArrayList<>();
+        map.put("1", list1);
+        map.put("2", list2);
+        list2.add("i");
     }
 
     @Test
