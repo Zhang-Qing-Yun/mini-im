@@ -8,6 +8,7 @@ import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.exception.IMRuntimeException;
 import com.qingyun.im.common.util.FileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -21,7 +22,8 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author: 張青云
  * @create: 2021-10-16 18:47
  **/
-@Component("oneMsgToOneFile")
+@Component
+@Primary
 public class OneMsgToOneFile implements Persistence {
     @Autowired
     private ClientSession session;

@@ -1,9 +1,12 @@
 package com.qingyun.im.client.msgCache;
 
+import com.qingyun.im.client.config.AttributeConfig;
 import com.qingyun.im.common.entity.ProtoMsg;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 /**
  * @description： 本地缓存消息并按接收到的顺序
@@ -12,11 +15,16 @@ import java.util.Collection;
  **/
 @Component
 public class MsgCacheManager {
+    private LinkedHashSet<String> order = new LinkedHashSet<>();
+
+    @Autowired
+    private AttributeConfig attribute;
+
 
     /**
      * 缓存一条消息
      */
-    public void addMsg(ProtoMsg.Message message) {
+    public synchronized void addMsg(ProtoMsg.Message message) {
 
     }
 

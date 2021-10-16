@@ -36,6 +36,6 @@ public final class FileUtil {
         if (isExist(path)) {
             return false;
         }
-        return new File(path).mkdir();
+        return new File(path).mkdirs();
     }
 }

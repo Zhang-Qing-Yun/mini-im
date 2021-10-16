@@ -23,4 +23,9 @@ public class AttributeConfig {
     //  单次发送消息的最大字符长度
     @Value("${im.client.messageMaxSize:500}")
     private int messageMaxSize;
+
+    //  客户端缓存在内存中等待查看的消息的条数
+    //  假设一条消息1KB，则10000条消息大小约为10MB
+    @Value("${im.client.cacheMessageSize:10000}")
+    private int cacheMessageSize;
 }
