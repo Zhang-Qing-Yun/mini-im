@@ -1,6 +1,8 @@
 package com.qingyun.im.client.msgCache.persistence;
 
 import com.qingyun.im.client.imClient.ClientSession;
+import com.qingyun.im.common.concurrent.CallbackTask;
+import com.qingyun.im.common.concurrent.CallbackTaskScheduler;
 import com.qingyun.im.common.constants.ClientConstants;
 import com.qingyun.im.common.entity.ProtoMsg;
 import com.qingyun.im.common.enums.Exceptions;
@@ -13,9 +15,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @description： 持久化在本地文件里，一条消息对应一个文件，从而在查找消息时减少了磁盘IO，方便了查找
@@ -27,9 +28,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class OneMsgToOneFile implements Persistence {
     @Autowired
     private ClientSession session;
-
-    @Autowired
-    private ThreadPoolExecutor ioThreadPool;
 
 
     /**
@@ -94,10 +92,18 @@ public class OneMsgToOneFile implements Persistence {
                 //  反序列
                 message = ProtoMsg.Message.parseFrom(data);
                 //  异步删除文件
-                ioThreadPool.submit(() -> {
-                    try {
+                CallbackTaskScheduler.addIOTarget(new CallbackTask<Void>() {
+                    @Override
+                    public Void execute() throws Exception {
                         file.delete();
-                    } catch (Exception e) {
+                        return null;
+                    }
+
+                    @Override
+                    public void onBack(Void aVoid) { }
+
+                    @Override
+                    public void onException(Throwable t) {
                         //  删除文件失败时不执行任何操作，让该文件留在磁盘上
                     }
                 });
@@ -116,8 +122,11 @@ public class OneMsgToOneFile implements Persistence {
         return message;
     }
 
+    /*
+    * 同步阻塞读文件，异步删除文件
+    */
     @Override
-    public List<ProtoMsg.Message> getMessageWithFriendAndDelete(String username) throws IMException {
+    public Set<ProtoMsg.Message> getMessageWithFriendAndDelete(String username) throws IMException {
         String path = ClientConstants.FILE_PATH_PREFIX + session.getUserInfo().getUsername() + "/"
                 + username + "/";
         File dir = new File(path);
@@ -131,7 +140,7 @@ public class OneMsgToOneFile implements Persistence {
         }
 
         //  读取文件并反序列化
-        List<ProtoMsg.Message> result = new ArrayList<>(files.length);
+        Set<ProtoMsg.Message> result = new HashSet<>(files.length);
         BufferedInputStream buffer = null;
         byte[] data = null;
         ProtoMsg.Message message = null;
@@ -158,19 +167,29 @@ public class OneMsgToOneFile implements Persistence {
         }
 
         //  异步删除文件、目录
-        ioThreadPool.submit(() -> {
-            //  删文件
-           for (File file: files) {
-               try {
-                   file.delete();
-               } catch (Exception e) {
-                   //  删除文件失败时不执行任何操作，让该文件留在磁盘上
-               }
-           }
-           //  删目录
-            if (dir.list().length == 0) {
-                dir.delete();
+        CallbackTaskScheduler.addIOTarget(new CallbackTask<Void>() {
+            @Override
+            public Void execute() throws Exception {
+                //  删文件
+                for (File file: files) {
+                    try {
+                        file.delete();
+                    } catch (Exception e) {
+                        //  删除文件失败时不执行任何操作，让该文件留在磁盘上
+                    }
+                }
+                //  删目录
+                if (dir.list().length == 0) {
+                    dir.delete();
+                }
+                return null;
             }
+
+            @Override
+            public void onBack(Void aVoid) { }
+
+            @Override
+            public void onException(Throwable t) { }
         });
 
         return result;

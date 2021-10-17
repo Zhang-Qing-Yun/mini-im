@@ -3,7 +3,7 @@ package com.qingyun.im.client.msgCache.persistence;
 import com.qingyun.im.common.entity.ProtoMsg;
 import com.qingyun.im.common.exception.IMException;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * @description： 消息持久化系统
@@ -29,5 +29,5 @@ public interface Persistence {
      * @param username 用户名
      * @return 消息，没有则返回null
      */
-    List<ProtoMsg.Message> getMessageWithFriendAndDelete(String username) throws IMException;
+    Set<ProtoMsg.Message> getMessageWithFriendAndDelete(String username) throws IMException;
 }

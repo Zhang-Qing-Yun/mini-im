@@ -25,8 +25,4 @@ public class ClientConfig {
         return builder.build();
     }
 
-    @Bean("ioThreadPool")
-    public ThreadPoolExecutor ioThreadPool() {
-        return ThreadUtil.getIOTargetThreadPool();
-    }
 }
