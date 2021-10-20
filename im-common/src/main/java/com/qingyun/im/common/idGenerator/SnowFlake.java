@@ -4,7 +4,7 @@ import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.exception.IMRuntimeException;
 
 /**
- * @description： 使用雪花算法来生成分布式全局唯一id
+ * @description： 使用雪花算法来生成分布式全局唯一id，使用之前需要调用init方法
  * @author: 張青云
  * @create: 2021-10-20 09:27
  **/
@@ -41,7 +41,12 @@ public class SnowFlake extends AbstractIDGenerator {
     private long lastStamp = -1L;//上一次时间戳
 
 
-    public SnowFlake(long dataCenterId, long machineId) {
+    /**
+     * 初始化
+     * @param dataCenterId 数据中心的编号
+     * @param machineId 该机器在数据中心中的编号
+     */
+    public void init(long dataCenterId, long machineId) {
         if (dataCenterId > MAX_DATA_CENTER_NUM || dataCenterId < 0) {
             throw new IllegalArgumentException("dataCenterId can't be greater than MAX_DATA_CENTER_NUM or less than 0");
         }

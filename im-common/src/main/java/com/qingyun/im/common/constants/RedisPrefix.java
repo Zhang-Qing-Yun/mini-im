@@ -8,5 +8,8 @@ package com.qingyun.im.common.constants;
 public interface RedisPrefix {
 
     //  sessionCache的前缀
-    String SESSION_CACHE = "SessionCache:";
+    String SESSION_CACHE = "im:SessionCache:";
+
+    //  分布式id的前缀
+    String ID_GENERATOR = "im:IDGenerator:";
 }
