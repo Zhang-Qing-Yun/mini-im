@@ -6,7 +6,9 @@ package com.qingyun.im.common.enums;
  * @create: 2021-10-13 14:55
  **/
 public enum IDGeneratorType {
-    UUID(1);
+    DEFAULT(0),
+    UUID(1),
+    SNOW_FLAKE(2);
 
     //  类型编号
     int type;

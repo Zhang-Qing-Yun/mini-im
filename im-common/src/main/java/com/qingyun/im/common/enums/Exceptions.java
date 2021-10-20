@@ -36,7 +36,8 @@ public enum Exceptions {
     ZK_LISTENER(3001, "设置ZK监听器时出错"),
     ZK_READ_ERROR(3002, "读取ZK结点出错"),
     ADDR_ERROR(4000, "地址出错"),
-    NO_MESSAGE(4001, "不识别的消息");
+    NO_MESSAGE(4001, "不识别的消息"),
+    CLOCK_BACK(5000, "机器时钟发生了回拨");
 
     private final int code;
     private final String message;

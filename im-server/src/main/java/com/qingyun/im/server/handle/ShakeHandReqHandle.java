@@ -1,7 +1,7 @@
 package com.qingyun.im.server.handle;
 
 import com.qingyun.im.common.entity.ProtoMsg;
-import com.qingyun.im.server.idGenerator.IDGenerator;
+import com.qingyun.im.common.idGenerator.IDGenerator;
 import com.qingyun.im.server.imServer.ImServer;
 import com.qingyun.im.server.protoBuilder.ShakeHandRespMsgBuilder;
 import com.qingyun.im.server.session.LocalSession;

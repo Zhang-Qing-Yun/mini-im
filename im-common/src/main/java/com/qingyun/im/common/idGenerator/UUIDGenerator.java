@@ -1,4 +1,4 @@
-package com.qingyun.im.server.idGenerator;
+package com.qingyun.im.common.idGenerator;
 
 import java.util.UUID;
 
