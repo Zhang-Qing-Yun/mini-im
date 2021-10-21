@@ -11,6 +11,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+
 /**
  * @description： 处理握手消息
  * @author: 張青云
@@ -18,12 +20,22 @@ import org.springframework.stereotype.Component;
  **/
 @Component
 public class ShakeHandReqHandle extends SimpleChannelInboundHandler<ProtoMsg.Message> {
+    /**
+     * 用于生成sessionId的id生成器
+     */
+    private IDGenerator idGenerator;
+
     @Autowired
     private ImServer imServer;
 
     @Autowired
     private SessionManager sessionManager;
 
+
+    @PostConstruct
+    private void init() {
+        idGenerator = IDGenerator.getInstance(imServer.getIdGeneratorType());
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ProtoMsg.Message msg) throws Exception {
@@ -40,7 +52,6 @@ public class ShakeHandReqHandle extends SimpleChannelInboundHandler<ProtoMsg.Mes
         LocalSession localSession = new LocalSession(username);
         localSession.setChannel(ctx.channel());
         //  生成全局唯一id
-        IDGenerator idGenerator = IDGenerator.getInstance(imServer.getIdGeneratorType());
         String sessionId = idGenerator.generatorID();
         localSession.setSessionId(sessionId);
         //  保存session

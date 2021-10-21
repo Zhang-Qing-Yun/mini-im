@@ -8,7 +8,8 @@ package com.qingyun.im.common.enums;
 public enum IDGeneratorType {
     DEFAULT(0),
     UUID(1),
-    SNOW_FLAKE(2);
+    SNOW_FLAKE(2),
+    REDIS(3);
 
     //  类型编号
     int type;

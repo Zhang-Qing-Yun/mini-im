@@ -95,7 +95,7 @@ public class LoginCommandHandle implements CommandHandle {
         //  TODO：处理Server下线但是ZK上还没来得及删除的情况
         ImNode imNode = null;
         while (!imNodes.isEmpty()) {
-            imNode = loadBalancer.select(imNodes);
+            imNode = loadBalancer.select(imNodes, username);
             if (imNode.isReady()) {
                 break;
             } else {

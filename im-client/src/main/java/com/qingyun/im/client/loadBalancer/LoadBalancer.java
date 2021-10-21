@@ -15,9 +15,10 @@ public interface LoadBalancer {
     /**
      * 从给定集合中应用负载均衡策略选择一个
      * @param imNodes 全部元素
+     * @param username 当前登录用户的用户名
      * @return 选择结果
      */
-    ImNode select(List<ImNode> imNodes);
+    ImNode select(List<ImNode> imNodes, String username);
 
 
     /**
@@ -26,8 +27,15 @@ public interface LoadBalancer {
      * @return 负载均衡器
      */
     static LoadBalancer getInstance(int type) {
+        if (type == LoadBalancerType.DEFAULT.getType()) {
+            return new RandomLoadBalancer();
+        }
         if (type == LoadBalancerType.RANDOM.getType()) {
             return new RandomLoadBalancer();
+        } else if (type == LoadBalancerType.ROUND_ROBIN.getType()) {
+            return new RoundRobinLoadBalancer();
+        } else if (type == LoadBalancerType.CON_HASH.getType()) {
+            return new ConsistentHashLoadBalancer();
         }
         return new RandomLoadBalancer();
     }

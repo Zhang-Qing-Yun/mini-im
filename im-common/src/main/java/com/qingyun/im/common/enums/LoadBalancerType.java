@@ -6,7 +6,10 @@ package com.qingyun.im.common.enums;
  * @create: 2021-10-12 22:16
  **/
 public enum LoadBalancerType {
-    RANDOM(1);
+    DEFAULT(0),
+    RANDOM(1),
+    ROUND_ROBIN(2),
+    CON_HASH(3);
 
     //  类型编号
     int type;

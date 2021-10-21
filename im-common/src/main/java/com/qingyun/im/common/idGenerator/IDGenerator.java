@@ -26,6 +26,8 @@ public interface IDGenerator {
             return new UUIDGenerator();
         } else if (type == IDGeneratorType.SNOW_FLAKE.getType()) {
             return new SnowFlake();
+        } else if (type == IDGeneratorType.REDIS.getType()) {
+            return RedisGenerator.getInstance();
         }
 
         return new SnowFlake();
