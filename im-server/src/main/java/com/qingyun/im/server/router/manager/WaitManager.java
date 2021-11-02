@@ -35,15 +35,17 @@ public class WaitManager {
      * 取消一个等待结点
      * @param id 要取消的结点id。如果该结点不在等待集合当中，不做任何操作！
      */
-    public synchronized void decrease(Long id) {
-        boolean ok = waitNodes.remove(id);
-        if (!ok) {
-            return;
-        }
-        //  当等待集合为空时放行
-        if (waitNodes.isEmpty()) {
-            letGo();
-            canGo = true;
+    public void decrease(Long id) {
+        synchronized (o) {
+            boolean ok = waitNodes.remove(id);
+            if (!ok) {
+                return;
+            }
+            //  当等待集合为空时放行
+            if (waitNodes.isEmpty()) {
+                letGo();
+                canGo = true;
+            }
         }
     }
 
@@ -51,8 +53,14 @@ public class WaitManager {
      * 阻塞
      * @param maxWaitTime 最大等待时间
      */
-    public synchronized void await(long maxWaitTime) throws InterruptedException {
-        o.wait(maxWaitTime);
+    public void await(long maxWaitTime) throws InterruptedException {
+        synchronized (o) {
+            if (waitNodes != null && !waitNodes.isEmpty()) {
+                o.wait(maxWaitTime);
+            } else {
+                canGo = true;
+            }
+        }
     }
 
     /**

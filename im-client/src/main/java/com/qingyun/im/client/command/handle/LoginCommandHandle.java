@@ -78,13 +78,15 @@ public class LoginCommandHandle implements CommandHandle {
         param.put("password", password);
         Response response = HttpClient.post(okHttpClient, param.toString(), url);
         //  判断是否登陆成功
-        R result = JSON.parseObject(response.body().string(), R.class);
+        String string = response.body().string();
+        R result = JSON.parseObject(string, R.class);
         if (!result.getSuccess()) {
             System.out.println(result.getMessage());
             throw new IMException(Exceptions.LOGIN_ERROR.getCode(), Exceptions.LOGIN_ERROR.getMessage());
         }
         //  获取Server列表
-        List<ImNode> imNodes = (List<ImNode>) result.getData().get("imNodes");
+        String nodes = JSON.parseObject(JSON.parseObject(string).getString("data")).getString("imNodes");
+        List<ImNode> imNodes = JSON.parseArray(nodes, ImNode.class);
         if (imNodes == null || imNodes.size() == 0) {
             throw new IMRuntimeException(Exceptions.NO_SERVER.getCode(), Exceptions.NO_SERVER.getMessage());
         }

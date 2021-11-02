@@ -24,11 +24,12 @@ public class ZKServiceImpl implements ZKService {
 
     @Override
     public List<ImNode> getAllNode() {
-        //  获取所有结点的路径
-        List<String> paths = curatorZKClient.getChildren(ServerConstants.MANAGE_PATH);
+        //  获取所有结点的名字
+        List<String> names = curatorZKClient.getChildren(ServerConstants.MANAGE_PATH);
         //  封装结果
         List<ImNode> nodes = new ArrayList<>();
-        for (String path: paths) {
+        for (String name: names) {
+            String path = ServerConstants.MANAGE_PATH + "/" + name;
             //  读取结点数据
             byte[] payload = null;
             try {

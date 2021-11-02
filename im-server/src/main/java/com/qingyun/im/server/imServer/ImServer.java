@@ -75,6 +75,7 @@ public class ImServer {
 
     public ImServer() {
         ip = IOUtil.getHostAddress();
+        b = new ServerBootstrap();
         bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup();
         initBootstrap();
@@ -111,7 +112,9 @@ public class ImServer {
         try {
             //  1.开始接收连接请求
             future = b.bind(ip, attribute.getPort()).sync();
-            //  2.获取当前该集群中除了当前节点外的其它结点
+            //  2.获取当前该集群中除了当前节点外的其它结点（这里获取到的是该路径下的结点的名字）
+            //  创建父结点
+            imWorker.createParentIfNeeded(ServerConstants.MANAGE_PATH);
             List<String> children = curatorZKClient.getChildren(ServerConstants.MANAGE_PATH);
             //  3.向注册中心发布当前结点，即创建一个临时结点
             imWorker.setLocalNode(ip, attribute.getPort());
@@ -119,7 +122,7 @@ public class ImServer {
             //  4.开始监听集群变化，即监听Zk结点的变化
             listener.setListener();
             //  5.阻塞，直到与所有的Server都建立了双向连接为止
-            waitManager.init(getWaitNodesByPaths(children));
+            waitManager.init(getWaitNodesByNames(children));
             waitManager.await(attribute.getMaxStartTime());
             //  判断是否是超时退出
             if (!waitManager.isCanGo()) {
@@ -133,6 +136,7 @@ public class ImServer {
             //  8.等待服务端监听端口关闭
             future.channel().closeFuture().sync();
         } catch (Exception e) {
+            e.printStackTrace();
             throw new IMRuntimeException(Exceptions.START_FAIL.getCode(), Exceptions.START_FAIL.getMessage());
         } finally {
             //  关闭与ZK的连接（会删除临时结点），这时其它结点会监听到该结点下线，更新其路由表
@@ -145,13 +149,13 @@ public class ImServer {
 
     /**
      * 根据结点路径的集合获取要等待的结点
-     * @param paths 路径集合
+     * @param names 路径集合
      * @return 要等待的结点的集合
      */
-    private CopyOnWriteArraySet<Long> getWaitNodesByPaths(List<String> paths) {
+    private CopyOnWriteArraySet<Long> getWaitNodesByNames(List<String> names) {
         CopyOnWriteArraySet<Long> waitNodes = new CopyOnWriteArraySet<>();
-        for (String path: paths) {
-            waitNodes.add(imWorker.getIdByPath(path));
+        for (String path: names) {
+            waitNodes.add(imWorker.getIdByName(path));
         }
         return waitNodes;
     }

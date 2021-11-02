@@ -62,8 +62,11 @@ public class SendMsgHandle implements CommandHandle {
         //  解析命令
         String[] parseResult = commandValue.trim().split(" ");
         String toUsername = parseResult[1];
-        String context = parseResult[2].substring(0, attribute.getMessageMaxSize());  // 限制单次发送的字符的个数
-
+        String context = parseResult[2];
+        // 限制单次发送的字符的个数
+        if (context.length() > attribute.getMessageMaxSize()) {
+            context = context.substring(0, attribute.getMessageMaxSize());
+        }
         //  判断是否为好友关系
         boolean isFriend = friendList.isFriend(toUsername);
         if (!isFriend) {

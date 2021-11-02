@@ -3,8 +3,8 @@ package com.qingyun.im.client.imClient;
 import com.alibaba.fastjson.JSON;
 import com.qingyun.im.client.command.Command;
 import com.qingyun.im.client.command.CommandContext;
-import com.qingyun.im.client.command.handle.SendMsgHandle;
 import com.qingyun.im.client.config.AttributeConfig;
+import com.qingyun.im.client.handle.ChatMsgHandle;
 import com.qingyun.im.client.handle.ShakeHandRespHandle;
 import com.qingyun.im.client.pojo.UserInfo;
 import com.qingyun.im.client.sender.ShakeHandSender;
@@ -99,6 +99,9 @@ public class ImClient {
     @Autowired
     private FriendList friendList;
 
+    @Autowired
+    private ChatMsgHandle chatMsgHandle;
+
 
     public ImClient() {
 
@@ -128,7 +131,8 @@ public class ImClient {
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast("decoder", new ProtobufDecoder())
                                 .addLast("encoder", new ProtobufEncoder())
-                                .addLast("handRespHandle", handRespHandle);
+                                .addLast("handRespHandle", handRespHandle)
+                                .addLast("chatMsgHandle", chatMsgHandle);
                     }
                 });
     }
@@ -151,6 +155,7 @@ public class ImClient {
         } catch (Exception e) {
             throw new IMRuntimeException(Exceptions.GET_FRIEND_LIST.getCode(), Exceptions.GET_FRIEND_LIST.getMessage());
         }
+        System.out.println("用户名和密码正确，开始连接服务器");
         //  连接Netty Server
         try {
             this.channel = doConnect();
@@ -169,6 +174,8 @@ public class ImClient {
         } catch (InterruptedException e) {
             throw new IMRuntimeException(Exceptions.INTERRUPT.getCode(), Exceptions.INTERRUPT.getMessage());
         }
+        System.out.println("成功连接到服务器，可以输入命令了");
+        System.out.println("-----------------------------------------------");
         //  启动命令线程
         commandThread.start();
     }
@@ -267,11 +274,15 @@ public class ImClient {
         this.serverPort = serverPort;
     }
 
-    private synchronized void await() throws InterruptedException {
-        o.wait();
+    private void await() throws InterruptedException {
+        synchronized (o) {
+            o.wait();
+        }
     }
 
-    public synchronized void go() {
-        o.notify();
+    public void go() {
+        synchronized (o) {
+            o.notify();
+        }
     }
 }

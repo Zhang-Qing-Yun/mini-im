@@ -2,6 +2,7 @@ package com.qingyun.im.server.session;
 
 import com.qingyun.im.server.router.ImWorker;
 import com.qingyun.im.server.session.dao.SessionCacheDao;
+import com.qingyun.im.server.session.dao.UserCacheDao;
 import com.qingyun.im.server.session.entity.SessionCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,9 @@ public class SessionManager {
 
     @Autowired
     private SessionCacheDao sessionCacheDao;
+
+    @Autowired
+    private UserCacheDao userCacheDao;
 
 
     /**
@@ -52,12 +56,21 @@ public class SessionManager {
      * 保存session（在本地和分布式缓存各保存一份）
      */
     public synchronized void saveSessionCache(String sessionId, ServerSession session) {
-        //  在本地保存session
+        //  1.在本地保存session
         addLocalSession(sessionId, session);
 
         //  创建sessionCache
         SessionCache sessionCache = new SessionCache(sessionId, session.getUsername(), imWorker.getImNode());
-        //  保存到redis当中
+        //  2.将session保存到redis当中
         sessionCacheDao.save(sessionCache);
+        //  3.缓存用户的session信息
+        userCacheDao.addSession(session.getUsername(), sessionCache);
+    }
+
+    /**
+     * 获取某个用户的session信息
+     */
+    public SessionCache getUserSessionCache(String username) {
+        return userCacheDao.getSession(username);
     }
 }

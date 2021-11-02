@@ -10,6 +10,9 @@ public interface RedisPrefix {
     //  sessionCache的前缀
     String SESSION_CACHE = "im:SessionCache:";
 
+    //  UserCache的前缀
+    String USER_CACHE = "im:UserCache:";
+
     //  分布式id的前缀
     String ID_GENERATOR = "im:IDGenerator:";
 }

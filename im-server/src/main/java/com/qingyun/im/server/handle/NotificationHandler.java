@@ -9,6 +9,7 @@ import com.qingyun.im.server.router.Router;
 import com.qingyun.im.server.router.RouterMap;
 import com.qingyun.im.server.router.manager.WaitManager;
 import com.qingyun.im.server.util.SpringContextUtil;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
  * @create: 2021-10-10 19:09
  **/
 @Component
+@ChannelHandler.Sharable
 public class NotificationHandler extends SimpleChannelInboundHandler<ProtoMsg.Message> {
     @Autowired
     private SpringContextUtil contextUtil;

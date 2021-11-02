@@ -8,6 +8,7 @@ import com.qingyun.im.server.session.ServerSession;
 import com.qingyun.im.server.session.SessionManager;
 import com.qingyun.im.server.session.dao.SessionCacheDao;
 import com.qingyun.im.server.session.entity.SessionCache;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
  * @create: 2021-10-14 21:53
  **/
 @Component
+@ChannelHandler.Sharable
 public class ChatMsgHandle extends SimpleChannelInboundHandler<ProtoMsg.Message> {
     @Autowired
     private SessionManager sessionManager;
@@ -38,7 +40,18 @@ public class ChatMsgHandle extends SimpleChannelInboundHandler<ProtoMsg.Message>
             return;
         }
 
-        String sessionId = msg.getSessionId();
+        //  获取目标用户的session
+        String toUsername = msg.getMsg().getTo();
+        SessionCache userSessionCache = sessionManager.getUserSessionCache(toUsername);
+        //  用户不在线
+        if (userSessionCache == null) {
+            //  处理离线消息
+            handleOfflineMsg(msg);
+            return;
+        }
+
+        //  目标用户的sessionId
+        String sessionId = userSessionCache.getSessionId();
         ServerSession serverSession;
         SessionCache sessionCache;
         //  判断接收者是否与当前Server建立连接
@@ -47,17 +60,14 @@ public class ChatMsgHandle extends SimpleChannelInboundHandler<ProtoMsg.Message>
                 //  直接转发
                 serverSession.writeAndFlush(msg);
             } else {
+                //  与客户端断线了
                 handleOfflineMsg(msg);
             }
             return;
         }
-        //  判断接收者是否在线
-        if ((sessionCache = sessionCacheDao.get(sessionId)) != null) {
-            transferMsg(sessionCache, msg);
-            return;
-        }
-        //  处理离线消息
-        handleOfflineMsg(msg);
+        //  将消息转发给目的用户所连接的服务器
+        sessionCache = sessionCacheDao.get(sessionId);
+        transferMsg(sessionCache, msg);
     }
 
     /**

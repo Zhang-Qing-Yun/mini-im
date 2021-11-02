@@ -53,8 +53,6 @@ public class ImWorker {
             this.client = curatorZKClient.getClient();
         }
 
-        //  创建父结点
-        createParentIfNeeded(ServerConstants.MANAGE_PATH);
 
         //  创建一个临时有序节点，节点的payload为当前Server实例的ImNode
         try {
@@ -83,13 +81,16 @@ public class ImWorker {
      * 创建父结点（持久结点）
      * @param managePath 父结点路径
      */
-    private void createParentIfNeeded(String managePath) {
+    public void createParentIfNeeded(String managePath) {
+        if (client == null) {
+            this.client = curatorZKClient.getClient();
+        }
         try {
             Stat stat = client.checkExists().forPath(managePath);
             if (null == stat) {
                 client.create()
                         .creatingParentsIfNeeded()
-                        .withProtection()
+//                        .withProtection()  // 这句话的作用是在创建结点时加一个唯一id，避免重复创建
                         .withMode(CreateMode.PERSISTENT)
                         .forPath(managePath);
             }
@@ -109,6 +110,26 @@ public class ImWorker {
         if (index >= 0) {
             index += ServerConstants.PATH_PREFIX.length();
             sid = index <= path.length() ? path.substring(index) : null;
+        }
+
+        if (null == sid) {
+            throw new IMRuntimeException(Exceptions.ZK_NODE.getCode(), Exceptions.ZK_NODE.getMessage());
+        }
+
+        return Long.parseLong(sid);
+    }
+
+    /**
+     * 根据结点的名字获取ZK为该结点生成的序号
+     * @param name 结点名字
+     * @return 序号
+     */
+    public long getIdByName(String name) {
+        String sid = null;
+        int index = name.lastIndexOf(ServerConstants.PATH_PREFIX_NO_STRIP);
+        if (index >= 0) {
+            index += ServerConstants.PATH_PREFIX_NO_STRIP.length();
+            sid = index <= name.length() ? name.substring(index) : null;
         }
 
         if (null == sid) {

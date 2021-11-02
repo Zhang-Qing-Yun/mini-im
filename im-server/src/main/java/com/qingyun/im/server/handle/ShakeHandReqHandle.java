@@ -6,6 +6,7 @@ import com.qingyun.im.server.imServer.ImServer;
 import com.qingyun.im.server.protoBuilder.ShakeHandRespMsgBuilder;
 import com.qingyun.im.server.session.LocalSession;
 import com.qingyun.im.server.session.SessionManager;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import javax.annotation.PostConstruct;
  * @create: 2021-10-13 14:06
  **/
 @Component
+@ChannelHandler.Sharable
 public class ShakeHandReqHandle extends SimpleChannelInboundHandler<ProtoMsg.Message> {
     /**
      * 用于生成sessionId的id生成器
