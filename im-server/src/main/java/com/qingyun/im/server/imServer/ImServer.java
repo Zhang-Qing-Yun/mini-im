@@ -3,6 +3,7 @@ package com.qingyun.im.server.imServer;
 import com.alibaba.fastjson.JSON;
 import com.qingyun.im.common.codec.ProtobufDecoder;
 import com.qingyun.im.common.codec.ProtobufEncoder;
+import com.qingyun.im.common.constants.HeartBeatConstants;
 import com.qingyun.im.common.constants.ServerConstants;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.enums.IDGeneratorType;
@@ -11,6 +12,7 @@ import com.qingyun.im.common.exception.IMRuntimeException;
 import com.qingyun.im.common.util.IOUtil;
 import com.qingyun.im.server.config.AttributeConfig;
 import com.qingyun.im.server.handle.ChatMsgHandle;
+import com.qingyun.im.server.handle.HeartBeatHandle;
 import com.qingyun.im.server.handle.NotificationHandler;
 import com.qingyun.im.server.handle.ShakeHandReqHandle;
 import com.qingyun.im.server.router.ImWorker;
@@ -23,6 +25,8 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +39,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  * @create: 2021-10-05 19:42
  **/
 @Component
+@Slf4j
 public class ImServer {
     //  分布式id生成策略
     private int idGeneratorType = IDGeneratorType.UUID.getType();
@@ -72,6 +77,9 @@ public class ImServer {
     @Autowired
     private ChatMsgHandle chatMsgHandle;
 
+    @Autowired
+    private HeartBeatHandle heartBeatHandle;
+
 
     public ImServer() {
         ip = IOUtil.getHostAddress();
@@ -94,8 +102,10 @@ public class ImServer {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         //  TODO:添加handle
                         ChannelPipeline pipeline = ch.pipeline();
-                        pipeline.addLast("decoder", new ProtobufDecoder())
+                        pipeline.addLast("idleStateHandler", new IdleStateHandler(HeartBeatConstants.READER_IDLE, 0, 0))
+                                .addLast("decoder", new ProtobufDecoder())
                                 .addLast("encoder", new ProtobufEncoder())
+                                .addLast("heartBeatHandle", heartBeatHandle)
                                 .addLast("notificationHandler", notificationHandler)
                                 .addLast("handReqHandle", handReqHandle)
                                 .addLast("chatMsgHandle", chatMsgHandle);
@@ -133,6 +143,7 @@ public class ImServer {
             //  7.更新ZK结点的状态为可用，可以接收客户端连接了
             imWorker.getImNode().setReady(true);
             curatorZKClient.setNodeData(imWorker.getPathRegistered(), JSON.toJSONBytes(imWorker.getImNode()));
+            log.info("结点{}启动成功", imWorker.getImNode().getId());
             //  8.等待服务端监听端口关闭
             future.channel().closeFuture().sync();
         } catch (Exception e) {
@@ -144,6 +155,7 @@ public class ImServer {
             //  关闭线程组
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
+            log.info("结点{}下线", imWorker.getImNode().getId());
         }
     }
 

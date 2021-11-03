@@ -5,12 +5,14 @@ import com.qingyun.im.client.command.Command;
 import com.qingyun.im.client.command.CommandContext;
 import com.qingyun.im.client.config.AttributeConfig;
 import com.qingyun.im.client.handle.ChatMsgHandle;
+import com.qingyun.im.client.handle.HeartBeatHandle;
 import com.qingyun.im.client.handle.ShakeHandRespHandle;
 import com.qingyun.im.client.pojo.UserInfo;
 import com.qingyun.im.client.sender.ShakeHandSender;
 import com.qingyun.im.client.task.CommandScan;
 import com.qingyun.im.common.codec.ProtobufDecoder;
 import com.qingyun.im.common.codec.ProtobufEncoder;
+import com.qingyun.im.common.constants.HeartBeatConstants;
 import com.qingyun.im.common.entity.R;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.enums.LoadBalancerType;
@@ -23,6 +25,8 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +47,7 @@ import java.util.concurrent.TimeUnit;
  * @create: 2021-10-01 15:19
  **/
 @Component
+@Slf4j
 public class ImClient {
     //  与该客户端连接的Netty服务端的ip地址
     private String serverIP;
@@ -102,6 +107,9 @@ public class ImClient {
     @Autowired
     private ChatMsgHandle chatMsgHandle;
 
+    @Autowired
+    private HeartBeatHandle heartBeatHandle;
+
 
     public ImClient() {
 
@@ -129,8 +137,10 @@ public class ImClient {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         //  TODO：添加handle
                         ChannelPipeline pipeline = ch.pipeline();
-                        pipeline.addLast("decoder", new ProtobufDecoder())
+                        pipeline.addLast("idleStateHandler", new IdleStateHandler(HeartBeatConstants.READER_IDLE, 0, 0))
+                                .addLast("decoder", new ProtobufDecoder())
                                 .addLast("encoder", new ProtobufEncoder())
+                                .addLast("heartBeatHandle", heartBeatHandle)
                                 .addLast("handRespHandle", handRespHandle)
                                 .addLast("chatMsgHandle", chatMsgHandle);
                     }
@@ -174,6 +184,7 @@ public class ImClient {
         } catch (InterruptedException e) {
             throw new IMRuntimeException(Exceptions.INTERRUPT.getCode(), Exceptions.INTERRUPT.getMessage());
         }
+        log.info("客户端启动成功，连接到【{}】服务器", session.getImNode().getId());
         System.out.println("成功连接到服务器，可以输入命令了");
         System.out.println("-----------------------------------------------");
         //  启动命令线程

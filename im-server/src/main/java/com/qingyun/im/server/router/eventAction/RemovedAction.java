@@ -6,6 +6,7 @@ import com.qingyun.im.server.router.ImWorker;
 import com.qingyun.im.server.router.Router;
 import com.qingyun.im.server.router.RouterMap;
 import com.qingyun.im.server.router.manager.WaitManager;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
  * @create: 2021-10-09 18:58
  **/
 @Component("removedAction")
+@Slf4j
 public class RemovedAction implements EventAction{
     @Autowired
     private WaitManager waitManager;
@@ -45,6 +47,7 @@ public class RemovedAction implements EventAction{
             routerMap.removeCandidate(remoteId);
             waitManager.decrease(remoteId);
         }
+        log.info("检测到结点{}下线", remoteId);
         doAfterRemove(remoteNode);
     }
 

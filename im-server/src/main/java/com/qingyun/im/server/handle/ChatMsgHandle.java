@@ -78,6 +78,17 @@ public class ChatMsgHandle extends SimpleChannelInboundHandler<ProtoMsg.Message>
         ImNode imNode = sessionCache.getImNode();
         //  获取转发器
         Router router = routerMap.getRouterByNodeId(imNode.getId());
+
+        /*
+        * 正常情况下，该结点拥有到其它所有结点的转发器；
+        * 如果转发器为null，则说明目标用户所在的服务器下线了，此时Redis中所保存的SessionCache是脏数据；
+        * 然后我们将发给目标用户的消息当作离线消息处理；
+        * 当目标用户发现自己和服务端断连后会重连，然后会拉取离线消息
+        * */
+        if (router == null) {
+            handleOfflineMsg(msg);
+            return;
+        }
         //  转发消息
         router.writeAndFlush(msg);
     }

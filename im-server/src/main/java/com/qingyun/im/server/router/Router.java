@@ -173,6 +173,16 @@ public class Router {
         }
     }
 
+    /**
+     * 判断连接是否可用
+     */
+    public boolean isActive() {
+        if (channel != null) {
+            return channel.isActive();
+        }
+        return false;
+    }
+
     public ImNode getRemoteNode() {
         return remoteNode;
     }

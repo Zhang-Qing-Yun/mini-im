@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.qingyun.im.common.entity.Notification;
 import com.qingyun.im.common.entity.ProtoMsg;
 import com.qingyun.im.common.entity.ImNode;
+import com.qingyun.im.server.router.ImWorker;
 import com.qingyun.im.server.router.Router;
 import com.qingyun.im.server.router.RouterMap;
 import com.qingyun.im.server.router.manager.WaitManager;
@@ -12,6 +13,7 @@ import com.qingyun.im.server.util.SpringContextUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Component;
  **/
 @Component
 @ChannelHandler.Sharable
+@Slf4j
 public class NotificationHandler extends SimpleChannelInboundHandler<ProtoMsg.Message> {
     @Autowired
     private SpringContextUtil contextUtil;
@@ -32,6 +35,9 @@ public class NotificationHandler extends SimpleChannelInboundHandler<ProtoMsg.Me
 
     @Autowired
     private WaitManager waitManager;
+
+    @Autowired
+    private ImWorker imWorker;
 
 
     @Override
@@ -72,6 +78,7 @@ public class NotificationHandler extends SimpleChannelInboundHandler<ProtoMsg.Me
             //  更新转发表
             long id = notification.getData().getId();
             routerMap.toFullRouter(id);
+            log.info("结点{}创建了到结点{}的转发器", imWorker.getImNode().getId(), notification.getData().getId());
             //  回送ACK_ACK
             Router router = routerMap.getRouterByNodeId(id);
             router.sendAckAckNotification();
@@ -82,6 +89,8 @@ public class NotificationHandler extends SimpleChannelInboundHandler<ProtoMsg.Me
             ImNode node = notification.getData();
             //  更新转发表
             routerMap.toFullRouter(node.getId());
+            log.info("结点{}创建了到结点{}的转发器，两者完成了三次握手，成功建立了双向连接",
+                    imWorker.getImNode().getId(), notification.getData().getId());
             //  更新等待集合
             waitManager.decrease(node.getId());
         }

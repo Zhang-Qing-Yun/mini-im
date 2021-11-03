@@ -6,6 +6,7 @@ import com.qingyun.im.server.router.ImWorker;
 import com.qingyun.im.server.router.Router;
 import com.qingyun.im.server.router.RouterMap;
 import com.qingyun.im.server.util.SpringContextUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.recipes.cache.ChildData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
  * @create: 2021-10-09 18:56
  **/
 @Component("addedAction")
+@Slf4j
 public class AddedAction implements EventAction {
 
     @Autowired
@@ -45,6 +47,7 @@ public class AddedAction implements EventAction {
         if (router != null && router.getRemoteNode().equals(EventAction.getLocalNode(imWorker))) {
             return;
         }
+        log.info("结点{}监听到结点{}上线", imWorker.getImNode().getId(), remoteNode.getId());
         doAfterAdd(remoteNode, router);
     }
 
