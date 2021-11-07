@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Data
 public class ClientSession {
     //  连接的唯一标志
-    private String sessionId;
+    private String sessionId = "";
 
     //  是否已经使用用户名和密码登录
     private boolean isLogin = false;

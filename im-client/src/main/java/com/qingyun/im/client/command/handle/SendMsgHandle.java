@@ -5,6 +5,7 @@ import com.qingyun.im.client.command.Command;
 import com.qingyun.im.client.config.AttributeConfig;
 import com.qingyun.im.client.imClient.ClientSession;
 import com.qingyun.im.client.imClient.FriendList;
+import com.qingyun.im.client.imClient.ImClient;
 import com.qingyun.im.client.sender.ChatSender;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.exception.IMException;
@@ -31,6 +32,9 @@ public class SendMsgHandle implements CommandHandle {
     @Autowired
     private ChatSender chatSender;
 
+    @Autowired
+    private ImClient imClient;
+
 
     @Override
     public boolean isCare(String commandValue) {
@@ -41,7 +45,7 @@ public class SendMsgHandle implements CommandHandle {
     @Override
     public boolean isCorrect(String commandValue) {
         String[] parseValue = commandValue.trim().split(" ");
-        return parseValue.length == 3;
+        return parseValue.length >= 3;
     }
 
     @Override
@@ -56,13 +60,14 @@ public class SendMsgHandle implements CommandHandle {
         }
         //  检查连接是否可用
         if (!session.getChannel().isActive()) {
-            //  TODO：断线重连
+            //  断线重连
+            imClient.restart();
         }
 
         //  解析命令
         String[] parseResult = commandValue.trim().split(" ");
         String toUsername = parseResult[1];
-        String context = parseResult[2];
+        String context = commandValue.substring(parseResult[0].length()+parseResult[1].length()+2);
         // 限制单次发送的字符的个数
         if (context.length() > attribute.getMessageMaxSize()) {
             context = context.substring(0, attribute.getMessageMaxSize());

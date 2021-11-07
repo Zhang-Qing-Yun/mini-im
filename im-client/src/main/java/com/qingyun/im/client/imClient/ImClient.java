@@ -1,24 +1,29 @@
 package com.qingyun.im.client.imClient;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.qingyun.im.client.command.Command;
 import com.qingyun.im.client.command.CommandContext;
 import com.qingyun.im.client.config.AttributeConfig;
 import com.qingyun.im.client.handle.ChatMsgHandle;
+import com.qingyun.im.client.handle.ExceptionHandler;
 import com.qingyun.im.client.handle.HeartBeatHandle;
 import com.qingyun.im.client.handle.ShakeHandRespHandle;
+import com.qingyun.im.client.loadBalancer.LoadBalancer;
 import com.qingyun.im.client.pojo.UserInfo;
 import com.qingyun.im.client.sender.ShakeHandSender;
 import com.qingyun.im.client.task.CommandScan;
 import com.qingyun.im.common.codec.ProtobufDecoder;
 import com.qingyun.im.common.codec.ProtobufEncoder;
 import com.qingyun.im.common.constants.HeartBeatConstants;
+import com.qingyun.im.common.entity.ImNode;
 import com.qingyun.im.common.entity.R;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.enums.LoadBalancerType;
 import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.exception.IMRuntimeException;
 import com.qingyun.im.common.util.HttpClient;
+import com.qingyun.im.common.util.LogoUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -49,12 +54,6 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Slf4j
 public class ImClient {
-    //  与该客户端连接的Netty服务端的ip地址
-    private String serverIP;
-
-    //  与该客户端连接的Netty服务端的端口
-    private int serverPort;
-
     //  用于读取并处理命令的线程
     private Thread commandThread;
 
@@ -79,6 +78,9 @@ public class ImClient {
 
     @Value("${auth.getFriendListUrl}")
     private String getFriendListUrl;
+
+    @Value("${auth.loginUrl}")
+    private String loginUrl;
 
     @Autowired
     private CommandScan commandScan;
@@ -110,6 +112,9 @@ public class ImClient {
     @Autowired
     private HeartBeatHandle heartBeatHandle;
 
+    @Autowired
+    private ExceptionHandler exceptionHandler;
+
 
     public ImClient() {
 
@@ -118,8 +123,6 @@ public class ImClient {
 
     @PostConstruct  // 在BeanPostProcessor的前置处理器处被执行
     private void init() {
-        commandThread = new Thread(commandScan);
-        commandThread.setName("命令线程");
         group = new NioEventLoopGroup();
         initBootstrap();
     }
@@ -135,29 +138,42 @@ public class ImClient {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
-                        //  TODO：添加handle
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast("idleStateHandler", new IdleStateHandler(HeartBeatConstants.READER_IDLE, 0, 0))
                                 .addLast("decoder", new ProtobufDecoder())
                                 .addLast("encoder", new ProtobufEncoder())
                                 .addLast("heartBeatHandle", heartBeatHandle)
                                 .addLast("handRespHandle", handRespHandle)
-                                .addLast("chatMsgHandle", chatMsgHandle);
+                                .addLast("chatMsgHandle", chatMsgHandle)
+                                .addLast("exceptionHandler", exceptionHandler);
                     }
                 });
+    }
+
+    /**
+     * 初始化命令线程
+     */
+    private void initCommandThread() {
+        if (commandThread != null) {
+            commandThread.stop();
+            System.out.println("******重连以后请前先输入help命令******");
+        }
+        Scanner scanner = new Scanner(System.in);
+        commandScan.setScanner(scanner);
+        commandThread = new Thread(commandScan);
+        commandThread.setName("命令线程");
     }
 
     /**
      * 启动客户端
      */
     public void start() {
-        //  获取用户名和密码
-        scanUser();
-        //  执行登录命令
+        //  执行登录命令并连接到服务器
         invokeLoginCommand();
         //  设置ClientSession
         session.setLogin(true);
         session.setUserInfo(UserInfo.getInstance());
+        session.setConnected(true);
         //  加载好友列表
         try {
             List<String> list = getFriendList();
@@ -165,17 +181,6 @@ public class ImClient {
         } catch (Exception e) {
             throw new IMRuntimeException(Exceptions.GET_FRIEND_LIST.getCode(), Exceptions.GET_FRIEND_LIST.getMessage());
         }
-        System.out.println("用户名和密码正确，开始连接服务器");
-        //  连接Netty Server
-        try {
-            this.channel = doConnect();
-        } catch (Exception e) {
-            //  当连接出现问题时,直接退出
-            System.out.println("无法连接Server!");
-            throw new IMRuntimeException(Exceptions.CONNECT_ERROR.getCode(), Exceptions.CONNECT_ERROR.getMessage());
-        }
-        session.setConnected(true);
-        session.setChannel(channel);
         //  发送握手消息
         handSender.sendShakeHandMsg();
         //  阻塞
@@ -184,10 +189,11 @@ public class ImClient {
         } catch (InterruptedException e) {
             throw new IMRuntimeException(Exceptions.INTERRUPT.getCode(), Exceptions.INTERRUPT.getMessage());
         }
-        log.info("客户端启动成功，连接到【{}】服务器", session.getImNode().getId());
+        log.info("客户端成功连接到【{}】服务器", session.getImNode().getId());
         System.out.println("成功连接到服务器，可以输入命令了");
-        System.out.println("-----------------------------------------------");
+        LogoUtil.printSplitLine();
         //  启动命令线程
+        initCommandThread();
         commandThread.start();
     }
 
@@ -208,21 +214,27 @@ public class ImClient {
      * 执行登录命令
      */
     private void invokeLoginCommand() {
-        UserInfo userInfo = UserInfo.getInstance();
-        String commandValue = Command.LOGIN.getCommandKey() + " " +
-                userInfo.getUsername() + " " + userInfo.getPassword();
         boolean isSuccess = false;
         while (!isSuccess) {
+            if (!UserInfo.getInstance().isInit()) {
+                //  获取用户名和密码
+                scanUser();
+            }
+            UserInfo userInfo = UserInfo.getInstance();
+            String commandValue = Command.LOGIN.getCommandKey() + " " +
+                    userInfo.getUsername() + " " + userInfo.getPassword();
             isSuccess = commandContext.invokeHandle(commandValue);
         }
+        UserInfo.getInstance().setInit(true);
     }
 
     /**
      * 与NettyServer建立连接
+     * @return 建立连接后用于通信的channel，如果没有连接成功则返回null
      */
-    protected Channel doConnect() throws Exception {
+    protected Channel doConnect(String ip, int port) throws Exception {
         CompletableFuture<Channel> f = new CompletableFuture<>();
-        b.connect(serverIP, serverPort).addListener((ChannelFutureListener) future -> {
+        b.connect(ip, port).addListener((ChannelFutureListener) future -> {
             //  连接成功
             if (future.isSuccess()) {
                 f.complete(future.channel());
@@ -230,12 +242,14 @@ public class ImClient {
             } else {
                 //  是否需要继续重试
                 if (retryCount >= attribute.getMaxRetryCount()) {
-                    throw new IMException(Exceptions.CONNECT_ERROR.getCode(), Exceptions.CONNECT_ERROR.getMessage());
+                    f.complete(null);
+                    return;
+//                    throw new IMException(Exceptions.CONNECT_ERROR.getCode(), Exceptions.CONNECT_ERROR.getMessage());
                 }
                 //  尝试重新连接
                 group.schedule(() -> {
                     retryCount++;
-                    Channel channel = doConnect();
+                    Channel channel = doConnect(ip, port);
                     f.complete(channel);
                     return channel;
                 }, attribute.getRetryInterval(), TimeUnit.MILLISECONDS);
@@ -243,6 +257,71 @@ public class ImClient {
         });
         //  阻塞,获取channel
         return f.get();
+    }
+
+    /**
+     * 登录并选择一台服务器进行连接
+     * @return 连接到的服务器的channel
+     */
+    public Channel loginAndGetNode(String username, String password) throws Exception {
+        //  发HTTP请求登录的过程
+        String url = authAddress + loginUrl;
+        JSONObject param = new JSONObject();
+        param.put("username", username);
+        param.put("password", password);
+        Response response = HttpClient.post(okHttpClient, param.toString(), url);
+        //  判断是否登陆成功
+        String string = response.body().string();
+        R result = JSON.parseObject(string, R.class);
+        if (!result.getSuccess()) {
+            System.out.println(result.getMessage());
+            throw new IMException(Exceptions.LOGIN_ERROR.getCode(), Exceptions.LOGIN_ERROR.getMessage());
+        }
+        //  获取Server列表
+        String nodes = JSON.parseObject(JSON.parseObject(string).getString("data")).getString("imNodes");
+        List<ImNode> imNodes = JSON.parseArray(nodes, ImNode.class);
+        if (imNodes == null || imNodes.size() == 0) {
+            throw new IMRuntimeException(Exceptions.NO_SERVER.getCode(), Exceptions.NO_SERVER.getMessage());
+        }
+        //  获取负载均衡策略
+        LoadBalancer loadBalancer = LoadBalancer.getInstance(loadBalancerType);
+        //  选择一台Server
+        ImNode imNode = null;
+        Channel channel = null;
+        while (!imNodes.isEmpty()) {
+            imNode = loadBalancer.select(imNodes, username);
+            if (imNode.isReady()) {
+                //  处理Server下线但是ZK上还没来得及删除的情况
+                channel = doConnect(imNode.getIp(), imNode.getPort());
+                if (channel != null) {
+                    session.setImNode(imNode);
+                    session.setChannel(channel);
+                    this.channel = channel;
+                    break;
+                } else {
+                    imNodes.remove(imNode);
+                }
+            } else {
+                //  从集合中删除不可用结点
+                imNodes.remove(imNode);
+            }
+        }
+        if (imNode == null) {
+            throw new IMRuntimeException(Exceptions.NO_SERVER.getCode(), Exceptions.NO_SERVER.getMessage());
+        }
+        return channel;
+    }
+
+    /**
+     * 重新启动
+     */
+    public void restart() {
+        //  关闭心跳任务
+        handRespHandle.cancelHeartBeat();
+        //  断开与原服务器的连接
+        session.getChannel().close();
+        //  重新选择一台服务器并建立连接
+        start();
     }
 
     /**
@@ -273,16 +352,12 @@ public class ImClient {
         return loadBalancerType;
     }
 
+    public Channel getChannel() {
+        return channel;
+    }
+
     public void setLoadBalancerType(int loadBalancerType) {
         this.loadBalancerType = loadBalancerType;
-    }
-
-    public void setServerIP(String serverIP) {
-        this.serverIP = serverIP;
-    }
-
-    public void setServerPort(int serverPort) {
-        this.serverPort = serverPort;
     }
 
     private void await() throws InterruptedException {

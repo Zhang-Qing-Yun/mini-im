@@ -4,6 +4,7 @@ import com.qingyun.im.server.router.ImWorker;
 import com.qingyun.im.server.session.dao.SessionCacheDao;
 import com.qingyun.im.server.session.dao.UserCacheDao;
 import com.qingyun.im.server.session.entity.SessionCache;
+import io.netty.util.AttributeKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
  **/
 @Component
 public class SessionManager {
+    //  用于给channel绑定sessionId的Key
+    public static final AttributeKey<String> SESSION_ID_KEY = AttributeKey.valueOf("sessionId");
+
     //  本地保存session
     private final ConcurrentHashMap<String, ServerSession> localSessions = new ConcurrentHashMap<>();
 
@@ -72,5 +76,12 @@ public class SessionManager {
      */
     public SessionCache getUserSessionCache(String username) {
         return userCacheDao.getSession(username);
+    }
+
+    /**
+     * 删除保存在分布式缓存中的session
+     */
+    public void removeSessionCache(String sessionId) {
+        sessionCacheDao.remove(sessionId);
     }
 }

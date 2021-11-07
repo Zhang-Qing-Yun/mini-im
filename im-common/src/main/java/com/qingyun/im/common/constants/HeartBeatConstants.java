@@ -12,7 +12,7 @@ public interface HeartBeatConstants {
     long PING_INTERVAL = 5000;
 
     /**
-     * 读空闲的时间
+     * 读空闲的时间，单位秒
      */
-    int READER_IDLE = 30;
+    int READER_IDLE = (int) (PING_INTERVAL / 1000) * 4;
 }

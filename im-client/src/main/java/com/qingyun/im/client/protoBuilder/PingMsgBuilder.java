@@ -8,8 +8,10 @@ import com.qingyun.im.common.entity.ProtoMsg;
  * @create: 2021-11-03 21:53
  **/
 public class PingMsgBuilder {
-    public static ProtoMsg.Message buildPingMsg() {
-        ProtoMsg.Message.Builder mb = ProtoMsg.Message.newBuilder().setType(ProtoMsg.Message.Type.PingType);
+    public static ProtoMsg.Message buildPingMsg(String sessionId) {
+        ProtoMsg.Message.Builder mb = ProtoMsg.Message.newBuilder()
+                .setType(ProtoMsg.Message.Type.PingType)
+                .setSessionId(sessionId);
         return mb.build();
     }
 }

@@ -2,6 +2,7 @@ package com.qingyun.im.client.command;
 
 import com.qingyun.im.client.command.handle.CommandHandle;
 import com.qingyun.im.common.exception.IMException;
+import com.qingyun.im.common.util.LogoUtil;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -82,12 +83,14 @@ public class CommandContext implements ApplicationContextAware {
 
         try {
             handle.process(commandValue);
+            LogoUtil.printSplitLine();
             return true;
         } catch(RuntimeException e) {
             System.out.println(e.getMessage());
             System.exit(1);
         } catch (Exception e) {
             System.out.println("错误，请重试！" + "提示：" + e.getMessage());
+            LogoUtil.printSplitLine();
             return false;
         }
         return false;

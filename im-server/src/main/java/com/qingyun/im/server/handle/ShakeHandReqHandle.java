@@ -6,6 +6,7 @@ import com.qingyun.im.server.imServer.ImServer;
 import com.qingyun.im.server.protoBuilder.ShakeHandRespMsgBuilder;
 import com.qingyun.im.server.session.LocalSession;
 import com.qingyun.im.server.session.SessionManager;
+import com.qingyun.im.server.session.entity.SessionCache;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -50,6 +51,13 @@ public class ShakeHandReqHandle extends SimpleChannelInboundHandler<ProtoMsg.Mes
         //  获取握手消息
         ProtoMsg.ShakeHandReq handReq = msg.getShakeHandReq();
         String username = handReq.getUsername();
+
+        //  删除上次连接保存在路由层的痕迹
+        SessionCache oldUserSessionCache = sessionManager.getUserSessionCache(username);
+        if (oldUserSessionCache != null) {
+            sessionManager.removeSessionCache(oldUserSessionCache.getSessionId());
+        }
+
         //  创建session
         LocalSession localSession = new LocalSession(username);
         localSession.setChannel(ctx.channel());
@@ -58,6 +66,8 @@ public class ShakeHandReqHandle extends SimpleChannelInboundHandler<ProtoMsg.Mes
         localSession.setSessionId(sessionId);
         //  保存session
         sessionManager.saveSessionCache(sessionId, localSession);
+        //  为当前channel绑定sessionId
+        ctx.channel().attr(SessionManager.SESSION_ID_KEY).set(sessionId);
         //  回送握手应答消息
         ProtoMsg.Message pkg = ShakeHandRespMsgBuilder.buildHandRespMsg(sessionId);
         localSession.writeAndFlush(pkg);

@@ -14,13 +14,14 @@ import java.util.Scanner;
  **/
 @Component
 public class CommandScan implements Runnable{
+    private Scanner scanner;
+
     @Autowired
     private CommandContext commandContext;
 
 
     @Override
     public void run() {
-        Scanner scanner = new Scanner(System.in);
         while (true) {
             //  读取一条命令
             String commandValue = scanner.nextLine();
@@ -29,5 +30,9 @@ public class CommandScan implements Runnable{
             }
             commandContext.invokeHandle(commandValue);
         }
+    }
+
+    public void setScanner(Scanner scanner) {
+        this.scanner = scanner;
     }
 }

@@ -5,6 +5,7 @@ import com.qingyun.im.client.imClient.ImClient;
 import com.qingyun.im.client.task.HeatBeatTask;
 import com.qingyun.im.common.constants.HeartBeatConstants;
 import com.qingyun.im.common.entity.ProtoMsg;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.concurrent.ScheduledFuture;
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @create: 2021-10-13 23:36
  **/
 @Component
+@ChannelHandler.Sharable
 public class ShakeHandRespHandle extends SimpleChannelInboundHandler<ProtoMsg.Message>{
     private volatile ScheduledFuture<?> heartBeat;
 
@@ -36,26 +38,29 @@ public class ShakeHandRespHandle extends SimpleChannelInboundHandler<ProtoMsg.Me
             return;
         }
         //  为session设置id
-        session.setSessionId(msg.getSessionId());
+        String sessionId = msg.getSessionId();
+        session.setSessionId(sessionId);
         //  解除ImClient的阻塞
         imClient.go();
 
-        //  创建定时任务，用于发送心跳消息
-        heartBeat = ctx.executor().scheduleAtFixedRate(new HeatBeatTask(ctx),
-                0, HeartBeatConstants.PING_INTERVAL, TimeUnit.MILLISECONDS);
+        //  启动定时任务，用于发送心跳消息
+        startHeartBeat(ctx, sessionId);
     }
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        cancelHeartBeat();
-        cause.printStackTrace();
-        ctx.close();
+    /**
+     * 启动心跳任务
+     * @param ctx 要往哪个通道发送心跳
+     * @param sessionId sessionId
+     */
+    public void startHeartBeat(ChannelHandlerContext ctx, String sessionId) {
+        heartBeat = ctx.executor().scheduleAtFixedRate(new HeatBeatTask(ctx, sessionId),
+                0, HeartBeatConstants.PING_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
     /**
      * 取消心跳任务
      */
-    protected void cancelHeartBeat() {
+    public void cancelHeartBeat() {
         if (heartBeat != null) {
             heartBeat.cancel(true);
             heartBeat = null;

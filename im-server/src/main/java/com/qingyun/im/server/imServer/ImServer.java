@@ -11,10 +11,7 @@ import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.exception.IMRuntimeException;
 import com.qingyun.im.common.util.IOUtil;
 import com.qingyun.im.server.config.AttributeConfig;
-import com.qingyun.im.server.handle.ChatMsgHandle;
-import com.qingyun.im.server.handle.HeartBeatHandle;
-import com.qingyun.im.server.handle.NotificationHandler;
-import com.qingyun.im.server.handle.ShakeHandReqHandle;
+import com.qingyun.im.server.handle.*;
 import com.qingyun.im.server.router.ImWorker;
 import com.qingyun.im.server.router.manager.WaitManager;
 import com.qingyun.im.common.zk.CuratorZKClient;
@@ -80,6 +77,9 @@ public class ImServer {
     @Autowired
     private HeartBeatHandle heartBeatHandle;
 
+    @Autowired
+    private ExceptionHandler exceptionHandler;
+
 
     public ImServer() {
         ip = IOUtil.getHostAddress();
@@ -100,7 +100,6 @@ public class ImServer {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
-                        //  TODO:添加handle
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast("idleStateHandler", new IdleStateHandler(HeartBeatConstants.READER_IDLE, 0, 0))
                                 .addLast("decoder", new ProtobufDecoder())
@@ -108,7 +107,8 @@ public class ImServer {
                                 .addLast("heartBeatHandle", heartBeatHandle)
                                 .addLast("notificationHandler", notificationHandler)
                                 .addLast("handReqHandle", handReqHandle)
-                                .addLast("chatMsgHandle", chatMsgHandle);
+                                .addLast("chatMsgHandle", chatMsgHandle)
+                                .addLast("exceptionHandler", exceptionHandler);
                     }
                 });
     }
@@ -136,6 +136,7 @@ public class ImServer {
             waitManager.await(attribute.getMaxStartTime());
             //  判断是否是超时退出
             if (!waitManager.isCanGo()) {
+                log.info("等待建立结点互联的过程中超时");
                 throw new IMException(Exceptions.START_FAIL.getCode(), Exceptions.START_FAIL.getMessage());
             }
             //  6.注册该Server下线时的钩子函数，执行一些关闭前的操作

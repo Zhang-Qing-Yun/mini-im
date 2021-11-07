@@ -14,18 +14,21 @@ import lombok.extern.slf4j.Slf4j;
 public class HeatBeatTask implements Runnable {
     private final ChannelHandlerContext ctx;
 
-    public HeatBeatTask(ChannelHandlerContext ctx) {
+    private final String sessionId;
+
+    public HeatBeatTask(ChannelHandlerContext ctx, String sessionId) {
         this.ctx = ctx;
+        this.sessionId = sessionId;
     }
 
     @Override
     public void run() {
-        ProtoMsg.Message pingMsg = PingMsgBuilder.buildPingMsg();
+        ProtoMsg.Message pingMsg = PingMsgBuilder.buildPingMsg(sessionId);
         ctx.writeAndFlush(pingMsg).addListener(future -> {
             if (future.isSuccess()) {
-                log.info("客户端成功向服务端发送了心跳消息");
+//                log.info("客户端成功向服务端发送了心跳消息");
             } else {
-                log.error("客户端心跳消息发送失败");
+//                log.error("客户端心跳消息发送失败");
             }
         });
     }

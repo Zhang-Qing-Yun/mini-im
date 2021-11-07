@@ -17,6 +17,7 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.AttributeKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,9 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Scope("prototype")
 public class Router {
+    //  用来标志一个channel是一个转发器所对应的
+    public static final AttributeKey<Long> ROUTER_KEY = AttributeKey.valueOf("router");
+
     //  与该Router连接的Server的节点信息
     private ImNode remoteNode;
 
@@ -76,7 +80,6 @@ public class Router {
                 .handler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
-                        //  TODO：添加handle
                         ChannelPipeline pipeline = ch.pipeline();
                         pipeline.addLast("decoder", new ProtobufDecoder())
                                 .addLast("encoder", new ProtobufEncoder())
@@ -169,6 +172,7 @@ public class Router {
         group.shutdownGracefully();
         remoteNode = null;
         if (channel != null) {
+            channel.close();
             channel = null;
         }
     }

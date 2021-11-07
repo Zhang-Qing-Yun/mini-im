@@ -1,6 +1,8 @@
 package com.qingyun.im.client.handle;
 
+import com.qingyun.im.client.imClient.ImClient;
 import com.qingyun.im.common.entity.ProtoMsg;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
@@ -16,9 +18,11 @@ import org.springframework.stereotype.Component;
  **/
 @Component
 @Slf4j
+@ChannelHandler.Sharable
 public class HeartBeatHandle extends SimpleChannelInboundHandler<ProtoMsg.Message> {
     @Autowired
-    private ShakeHandRespHandle shakeHandRespHandle;
+    private ImClient imClient;
+
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ProtoMsg.Message msg) throws Exception {
@@ -28,7 +32,7 @@ public class HeartBeatHandle extends SimpleChannelInboundHandler<ProtoMsg.Messag
             return;
         }
 
-        log.info("客户端接收到服务端发送的Pong消息");
+//        log.info("客户端接收到服务端发送的Pong消息");
     }
 
     @Override
@@ -36,11 +40,8 @@ public class HeartBeatHandle extends SimpleChannelInboundHandler<ProtoMsg.Messag
         if (evt instanceof IdleStateEvent) {
             IdleState state = ((IdleStateEvent) evt).state();
             if (state == IdleState.READER_IDLE) {
-                shakeHandRespHandle.cancelHeartBeat();
-                //  TODO：通过心跳发现断连
-                //  在规定时间内没有收到客户端发送的数据, 主动断开连接
-//                log.info("长时间未收到心跳消息，断开连接！");
-//                ctx.close();
+                //  重新选择一台服务器并建立连接
+                imClient.restart();
             } else {
                 super.userEventTriggered(ctx, evt);
             }

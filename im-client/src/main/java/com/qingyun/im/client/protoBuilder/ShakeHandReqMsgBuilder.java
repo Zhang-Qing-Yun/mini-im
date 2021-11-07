@@ -9,9 +9,10 @@ import com.qingyun.im.common.entity.ProtoMsg;
  **/
 public class ShakeHandReqMsgBuilder {
 
-    public static ProtoMsg.Message buildShakeHandReqMsg(String username) {
+    public static ProtoMsg.Message buildShakeHandReqMsg(String username, String sessionId) {
         ProtoMsg.Message.Builder mb = ProtoMsg.Message.newBuilder()
-                .setType(ProtoMsg.Message.Type.ShakeHandReqType);
+                .setType(ProtoMsg.Message.Type.ShakeHandReqType)
+                .setSessionId(sessionId);
         ProtoMsg.ShakeHandReq.Builder sb = ProtoMsg.ShakeHandReq.newBuilder().setUsername(username);
         return mb.setShakeHandReq(sb.build()).build();
     }

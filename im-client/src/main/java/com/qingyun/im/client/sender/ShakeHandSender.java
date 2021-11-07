@@ -27,7 +27,8 @@ public class ShakeHandSender extends BaseSender {
      */
     public void sendShakeHandMsg() {
         //  构建消息
-        ProtoMsg.Message pkg = ShakeHandReqMsgBuilder.buildShakeHandReqMsg(session.getUserInfo().getUsername());
+        ProtoMsg.Message pkg = ShakeHandReqMsgBuilder.buildShakeHandReqMsg(
+                session.getUserInfo().getUsername(), session.getSessionId());
         super.sendMsg(pkg);
     }
 }

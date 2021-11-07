@@ -48,7 +48,6 @@ public class GetMsgCommandHandle implements CommandHandle {
         System.out.println("该好友发送的未读消息如下：");
         for (ProtoMsg.Message message: messages) {
             System.out.println(message.getMsg().getContext());
-            System.out.println("------------------------------------------");
         }
     }
 }

@@ -55,6 +55,8 @@ public class NotificationHandler extends SimpleChannelInboundHandler<ProtoMsg.Me
 
         //  连接成功类型的通知
         if (notification.getType() == Notification.CONNECT_FINISHED) {
+            //  阻塞，直至完成等待集合的初始化
+            waitManager.awaitInit();
             //  为了实现结点互联，需要创建转发器并与对方连接
             ApplicationContext context = contextUtil.getContext();
             Router router = context.getBean(Router.class);
@@ -79,6 +81,8 @@ public class NotificationHandler extends SimpleChannelInboundHandler<ProtoMsg.Me
             long id = notification.getData().getId();
             routerMap.toFullRouter(id);
             log.info("结点{}创建了到结点{}的转发器", imWorker.getImNode().getId(), notification.getData().getId());
+            //  标识这个channel所对应的是一个转发器
+            ctx.channel().attr(Router.ROUTER_KEY).set(id);
             //  回送ACK_ACK
             Router router = routerMap.getRouterByNodeId(id);
             router.sendAckAckNotification();
@@ -89,6 +93,8 @@ public class NotificationHandler extends SimpleChannelInboundHandler<ProtoMsg.Me
             ImNode node = notification.getData();
             //  更新转发表
             routerMap.toFullRouter(node.getId());
+            //  标识这个channel所对应的是一个转发器
+            ctx.channel().attr(Router.ROUTER_KEY).set(node.getId());
             log.info("结点{}创建了到结点{}的转发器，两者完成了三次握手，成功建立了双向连接",
                     imWorker.getImNode().getId(), notification.getData().getId());
             //  更新等待集合

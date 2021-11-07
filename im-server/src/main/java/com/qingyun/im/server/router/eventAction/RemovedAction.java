@@ -47,7 +47,6 @@ public class RemovedAction implements EventAction{
             routerMap.removeCandidate(remoteId);
             waitManager.decrease(remoteId);
         }
-        log.info("检测到结点{}下线", remoteId);
         doAfterRemove(remoteNode);
     }
 
@@ -64,6 +63,7 @@ public class RemovedAction implements EventAction{
             router.stopConnecting();
             //  更新转发表
             routerMap.removeRouter(id);
+            log.info("检测到结点{}下线，已删除对应的转发器", id);
         }
     }
 }

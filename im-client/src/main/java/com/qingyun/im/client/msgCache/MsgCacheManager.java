@@ -117,4 +117,29 @@ public class MsgCacheManager {
         }
         return result;
     }
+
+    /**
+     * 持久化内存中的消息，持久化完成后清空内存
+     */
+    public synchronized void persistMsg() {
+        //  持久化内存中的消息
+        for (Map.Entry<String, Set<ProtoMsg.Message>> entry: msgHolder.entrySet()) {
+            Set<ProtoMsg.Message> messages = entry.getValue();
+            for (ProtoMsg.Message message: messages) {
+                persistence.persistMessage(message);
+            }
+        }
+
+        //  清空内存
+        msgHolder.clear();
+        order.clear();
+        friendsWithMsg.clear();
+    }
+
+    /**
+     * 从持久化中加载消息
+     */
+    public synchronized void initFromPersistence() {
+
+    }
 }

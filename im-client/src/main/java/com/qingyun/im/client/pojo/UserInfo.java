@@ -11,6 +11,7 @@ public class UserInfo {
 
     private String username;
     private String password;
+    private boolean isInit = false;
 
     private UserInfo() {
 
@@ -32,6 +33,13 @@ public class UserInfo {
         this.password = password;
     }
 
+    public boolean isInit() {
+        return isInit;
+    }
+
+    public void setInit(boolean init) {
+        isInit = init;
+    }
 
     /**
      * 使用DCL创建或获取单例对象
