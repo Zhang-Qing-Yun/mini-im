@@ -18,7 +18,8 @@ public enum Command {
     ALL_FRIEND("allFriend", "查看好友列表  【示例：allFriend】"),
     SEND_MSG("send", "发送消息给好友  【示例：send username message】"),
     GET_FRIENDS_WITH_MSG("getFriendsWithMsg", "获取存在未读消息的全部好友  【示例：getFriendsWithMsg】"),
-    GET_MSG("getMsg", "获取某个好友发来的未读消息  【示例：getMsg username】");
+    GET_MSG("getMsg", "获取某个好友发来的未读消息  【示例：getMsg username】"),
+    LOGOUT("logout", "退出  【示例：logout】");
 
 
     //  命令的关键字，只能是一个单词

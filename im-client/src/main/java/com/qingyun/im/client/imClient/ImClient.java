@@ -10,6 +10,7 @@ import com.qingyun.im.client.handle.ExceptionHandler;
 import com.qingyun.im.client.handle.HeartBeatHandle;
 import com.qingyun.im.client.handle.ShakeHandRespHandle;
 import com.qingyun.im.client.loadBalancer.LoadBalancer;
+import com.qingyun.im.client.msgCache.MsgCacheManager;
 import com.qingyun.im.client.pojo.UserInfo;
 import com.qingyun.im.client.sender.ShakeHandSender;
 import com.qingyun.im.client.task.CommandScan;
@@ -90,6 +91,9 @@ public class ImClient {
 
     @Autowired
     private ClientSession session;
+
+    @Autowired
+    private MsgCacheManager msgCacheManager;
 
     @Autowired
     private AttributeConfig attribute;
@@ -189,9 +193,12 @@ public class ImClient {
         } catch (InterruptedException e) {
             throw new IMRuntimeException(Exceptions.INTERRUPT.getCode(), Exceptions.INTERRUPT.getMessage());
         }
+        //  从持久化中加载消息到内存
+        msgCacheManager.initFromPersistence();
+        //  TODO：加载离线消息
+
         log.info("客户端成功连接到【{}】服务器", session.getImNode().getId());
         System.out.println("成功连接到服务器，可以输入命令了");
-        LogoUtil.printSplitLine();
         //  启动命令线程
         initCommandThread();
         commandThread.start();

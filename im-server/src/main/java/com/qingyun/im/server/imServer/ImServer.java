@@ -78,6 +78,9 @@ public class ImServer {
     private HeartBeatHandle heartBeatHandle;
 
     @Autowired
+    private LogoutHandle logoutHandle;
+
+    @Autowired
     private ExceptionHandler exceptionHandler;
 
 
@@ -108,6 +111,7 @@ public class ImServer {
                                 .addLast("notificationHandler", notificationHandler)
                                 .addLast("handReqHandle", handReqHandle)
                                 .addLast("chatMsgHandle", chatMsgHandle)
+                                .addLast("logoutHandle", logoutHandle)
                                 .addLast("exceptionHandler", exceptionHandler);
                     }
                 });

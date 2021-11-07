@@ -29,5 +29,11 @@ public interface Persistence {
      * @param username 用户名
      * @return 消息，没有则返回null
      */
-    Set<ProtoMsg.Message> getMessageWithFriendAndDelete(String username) throws IMException;
+    Set<ProtoMsg.Message> getMessageByUsernameAndDelete(String username) throws IMException;
+
+    /**
+     * 持久化系统中都有哪些好友的未读消息
+     * @return 这些好友的username
+     */
+    Set<String> getUsernamesWithMessage() throws IMException;
 }

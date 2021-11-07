@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -126,7 +127,7 @@ public class OneMsgToOneFile implements Persistence {
     * 同步阻塞读文件，异步删除文件
     */
     @Override
-    public Set<ProtoMsg.Message> getMessageWithFriendAndDelete(String username) throws IMException {
+    public Set<ProtoMsg.Message> getMessageByUsernameAndDelete(String username) throws IMException {
         String path = ClientConstants.FILE_PATH_PREFIX + session.getUserInfo().getUsername() + "/"
                 + username + "/";
         File dir = new File(path);
@@ -193,6 +194,31 @@ public class OneMsgToOneFile implements Persistence {
         });
 
         return result;
+    }
+
+    @Override
+    public Set<String> getUsernamesWithMessage() throws IMException {
+        String path = ClientConstants.FILE_PATH_PREFIX + session.getUserInfo().getUsername() + "/";
+        File dir = new File(path);
+        if (!dir.exists()) {
+            return null;
+        }
+        //  获取该路径下所有的文件夹
+        String[] oneUserDir = dir.list();
+        if (oneUserDir == null || oneUserDir.length == 0) {
+            return null;
+        }
+        Set<String> usernames = new HashSet<>(oneUserDir.length);
+        for (String username: oneUserDir) {
+            String childPath = path + username;
+            File file = new File(childPath);
+            String[] msg = file.list();
+            //  判断文件夹下是否有文件
+            if (msg != null && msg.length > 0) {
+                usernames.add(username);
+            }
+        }
+        return usernames;
     }
 
     /**

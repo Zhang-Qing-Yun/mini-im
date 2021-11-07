@@ -10,6 +10,7 @@ message Message {
         ShakeHandReqType = 3;
         ShakeHandRespType = 4;
         MsgType = 5;
+        LogoutType = 6;
     }
 
 

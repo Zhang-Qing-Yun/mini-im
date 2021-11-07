@@ -4,7 +4,9 @@ import com.qingyun.im.client.config.AttributeConfig;
 import com.qingyun.im.client.msgCache.persistence.OverflowHandle;
 import com.qingyun.im.client.msgCache.persistence.Persistence;
 import com.qingyun.im.common.entity.ProtoMsg;
+import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.exception.IMException;
+import com.qingyun.im.common.exception.IMRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -85,7 +87,7 @@ public class MsgCacheManager {
         }
 
         //  从持久化系统中读取
-        Set<ProtoMsg.Message> msgInPersistence = persistence.getMessageWithFriendAndDelete(username);
+        Set<ProtoMsg.Message> msgInPersistence = persistence.getMessageByUsernameAndDelete(username);
         //  从内存中读取
         Set<ProtoMsg.Message> msgCache = msgHolder.get(username);
         //  合并
@@ -137,9 +139,30 @@ public class MsgCacheManager {
     }
 
     /**
-     * 从持久化中加载消息
+     * 从持久化中加载消息，加载完成后删除持久化系统中的内容
      */
     public synchronized void initFromPersistence() {
-
+        try {
+            //  获取存在未读消息的好友
+            Set<String> usernames = persistence.getUsernamesWithMessage();
+            if (usernames == null || usernames.isEmpty()) {
+                return;
+            }
+            friendsWithMsg.addAll(usernames);
+            //  从持久化中向内存加载数据
+            for (String username: usernames) {
+                //  当持久化中的消息过多则只加载一部分，防止撑爆内存
+                if (count >= attribute.getCacheMessageSize()) {
+                    break;
+                }
+                Set<ProtoMsg.Message> messages = persistence.getMessageByUsernameAndDelete(username);
+                msgHolder.put(username, messages);
+                count += messages.size();
+                order.put(username, messages.size());
+            }
+        } catch (IMException e) {
+            throw new IMRuntimeException(Exceptions.LOAD_PERSISTENCE_FAIL.getCode(),
+                    Exceptions.LOAD_PERSISTENCE_FAIL.getMessage());
+        }
     }
 }

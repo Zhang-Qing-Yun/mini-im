@@ -84,4 +84,18 @@ public class SessionManager {
     public void removeSessionCache(String sessionId) {
         sessionCacheDao.remove(sessionId);
     }
+
+    /**
+     * 删除某个连接保存在本机和分布式缓存中的痕迹，即从路由层删除掉
+     */
+    public void removeSession(String sessionId) {
+        ServerSession localSession = getLocalSession(sessionId);
+
+        //  1.从本机缓存中删除
+        removeLocalSession(sessionId);
+        //  2.从分布式缓存中删除user缓存
+        userCacheDao.removeSession(localSession.getUsername());
+        //  3.从分布式缓存中删除session缓存
+        sessionCacheDao.remove(sessionId);
+    }
 }
