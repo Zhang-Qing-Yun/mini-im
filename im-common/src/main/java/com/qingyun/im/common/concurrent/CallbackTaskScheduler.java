@@ -14,6 +14,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @create: 2021-10-13 12:29
  **/
 public class CallbackTaskScheduler {
+    //  保证只被加载一次，是单例的
     static ListeningExecutorService gPool = null;
     static ListeningExecutorService ioPoll = null;
 

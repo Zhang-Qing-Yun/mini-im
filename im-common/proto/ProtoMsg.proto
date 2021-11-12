@@ -11,6 +11,9 @@ message Message {
         ShakeHandRespType = 4;
         MsgType = 5;
         LogoutType = 6;
+        IDAskType = 7;
+        IDRespType = 8;
+        AckType = 9;
     }
 
 
@@ -24,6 +27,7 @@ message Message {
         ShakeHandReq shakeHandReq = 5;
         ShakeHandResp shakeHandResp = 6;
         Msg msg = 7;
+        Ack ack = 8;
     }
 }
 
@@ -43,4 +47,9 @@ message Msg {
     string from = 1;
     string to = 2;
     string context = 3;
+}
+
+message Ack {
+    string from = 1;
+    string to = 2;
 }

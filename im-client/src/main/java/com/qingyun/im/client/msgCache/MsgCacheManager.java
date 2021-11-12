@@ -68,7 +68,7 @@ public class MsgCacheManager {
             set.add(message);
             order.put(username, size+1);
         } else {
-            HashSet<ProtoMsg.Message> set = new HashSet<>();
+            Set<ProtoMsg.Message> set = new LinkedHashSet<>();
             set.add(message);
             msgHolder.put(username, set);
             order.put(username, 1);
@@ -91,7 +91,7 @@ public class MsgCacheManager {
         //  从内存中读取
         Set<ProtoMsg.Message> msgCache = msgHolder.get(username);
         //  合并
-        HashSet<ProtoMsg.Message> result = new HashSet<>();
+        Set<ProtoMsg.Message> result = new LinkedHashSet<>();
         if (msgInPersistence != null && !msgInPersistence.isEmpty()) {
             result.addAll(msgInPersistence);
         }

@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.qingyun.im.client.command.Command;
 import com.qingyun.im.client.command.CommandContext;
 import com.qingyun.im.client.config.AttributeConfig;
-import com.qingyun.im.client.handle.ChatMsgHandle;
-import com.qingyun.im.client.handle.ExceptionHandler;
-import com.qingyun.im.client.handle.HeartBeatHandle;
-import com.qingyun.im.client.handle.ShakeHandRespHandle;
+import com.qingyun.im.client.handle.*;
 import com.qingyun.im.client.loadBalancer.LoadBalancer;
 import com.qingyun.im.client.msgCache.MsgCacheManager;
 import com.qingyun.im.client.pojo.UserInfo;
@@ -114,6 +111,9 @@ public class ImClient {
     private ChatMsgHandle chatMsgHandle;
 
     @Autowired
+    private IDRespHandle idRespHandle;
+
+    @Autowired
     private HeartBeatHandle heartBeatHandle;
 
     @Autowired
@@ -148,6 +148,7 @@ public class ImClient {
                                 .addLast("encoder", new ProtobufEncoder())
                                 .addLast("heartBeatHandle", heartBeatHandle)
                                 .addLast("handRespHandle", handRespHandle)
+                                .addLast("idRespHandle", idRespHandle)
                                 .addLast("chatMsgHandle", chatMsgHandle)
                                 .addLast("exceptionHandler", exceptionHandler);
                     }

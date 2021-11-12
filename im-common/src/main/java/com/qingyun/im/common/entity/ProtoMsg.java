@@ -101,6 +101,19 @@ public final class ProtoMsg {
      */
     ProtoMsg.MsgOrBuilder getMsgOrBuilder();
 
+    /**
+     * <code>.Ack ack = 8;</code>
+     */
+    boolean hasAck();
+    /**
+     * <code>.Ack ack = 8;</code>
+     */
+    ProtoMsg.Ack getAck();
+    /**
+     * <code>.Ack ack = 8;</code>
+     */
+    ProtoMsg.AckOrBuilder getAckOrBuilder();
+
     public ProtoMsg.Message.BodyCase getBodyCase();
   }
   /**
@@ -218,6 +231,20 @@ public final class ProtoMsg {
               bodyCase_ = 7;
               break;
             }
+            case 66: {
+              ProtoMsg.Ack.Builder subBuilder = null;
+              if (bodyCase_ == 8) {
+                subBuilder = ((ProtoMsg.Ack) body_).toBuilder();
+              }
+              body_ =
+                  input.readMessage(ProtoMsg.Ack.parser(), extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom((ProtoMsg.Ack) body_);
+                body_ = subBuilder.buildPartial();
+              }
+              bodyCase_ = 8;
+              break;
+            }
             default: {
               if (!parseUnknownFieldProto3(
                   input, unknownFields, extensionRegistry, tag)) {
@@ -283,6 +310,18 @@ public final class ProtoMsg {
        * <code>LogoutType = 6;</code>
        */
       LogoutType(6),
+      /**
+       * <code>IDAskType = 7;</code>
+       */
+      IDAskType(7),
+      /**
+       * <code>IDRespType = 8;</code>
+       */
+      IDRespType(8),
+      /**
+       * <code>AckType = 9;</code>
+       */
+      AckType(9),
       UNRECOGNIZED(-1),
       ;
 
@@ -314,6 +353,18 @@ public final class ProtoMsg {
        * <code>LogoutType = 6;</code>
        */
       public static final int LogoutType_VALUE = 6;
+      /**
+       * <code>IDAskType = 7;</code>
+       */
+      public static final int IDAskType_VALUE = 7;
+      /**
+       * <code>IDRespType = 8;</code>
+       */
+      public static final int IDRespType_VALUE = 8;
+      /**
+       * <code>AckType = 9;</code>
+       */
+      public static final int AckType_VALUE = 9;
 
 
       public final int getNumber() {
@@ -341,6 +392,9 @@ public final class ProtoMsg {
           case 4: return ShakeHandRespType;
           case 5: return MsgType;
           case 6: return LogoutType;
+          case 7: return IDAskType;
+          case 8: return IDRespType;
+          case 9: return AckType;
           default: return null;
         }
       }
@@ -401,6 +455,7 @@ public final class ProtoMsg {
       SHAKEHANDREQ(5),
       SHAKEHANDRESP(6),
       MSG(7),
+      ACK(8),
       BODY_NOT_SET(0);
       private final int value;
       private BodyCase(int value) {
@@ -420,6 +475,7 @@ public final class ProtoMsg {
           case 5: return SHAKEHANDREQ;
           case 6: return SHAKEHANDRESP;
           case 7: return MSG;
+          case 8: return ACK;
           case 0: return BODY_NOT_SET;
           default: return null;
         }
@@ -607,6 +663,32 @@ public final class ProtoMsg {
       return ProtoMsg.Msg.getDefaultInstance();
     }
 
+    public static final int ACK_FIELD_NUMBER = 8;
+    /**
+     * <code>.Ack ack = 8;</code>
+     */
+    public boolean hasAck() {
+      return bodyCase_ == 8;
+    }
+    /**
+     * <code>.Ack ack = 8;</code>
+     */
+    public ProtoMsg.Ack getAck() {
+      if (bodyCase_ == 8) {
+         return (ProtoMsg.Ack) body_;
+      }
+      return ProtoMsg.Ack.getDefaultInstance();
+    }
+    /**
+     * <code>.Ack ack = 8;</code>
+     */
+    public ProtoMsg.AckOrBuilder getAckOrBuilder() {
+      if (bodyCase_ == 8) {
+         return (ProtoMsg.Ack) body_;
+      }
+      return ProtoMsg.Ack.getDefaultInstance();
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -641,6 +723,9 @@ public final class ProtoMsg {
       }
       if (bodyCase_ == 7) {
         output.writeMessage(7, (ProtoMsg.Msg) body_);
+      }
+      if (bodyCase_ == 8) {
+        output.writeMessage(8, (ProtoMsg.Ack) body_);
       }
       unknownFields.writeTo(output);
     }
@@ -677,6 +762,10 @@ public final class ProtoMsg {
       if (bodyCase_ == 7) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(7, (ProtoMsg.Msg) body_);
+      }
+      if (bodyCase_ == 8) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(8, (ProtoMsg.Ack) body_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -719,6 +808,10 @@ public final class ProtoMsg {
           result = result && getMsg()
               .equals(other.getMsg());
           break;
+        case 8:
+          result = result && getAck()
+              .equals(other.getAck());
+          break;
         case 0:
         default:
       }
@@ -756,6 +849,10 @@ public final class ProtoMsg {
         case 7:
           hash = (37 * hash) + MSG_FIELD_NUMBER;
           hash = (53 * hash) + getMsg().hashCode();
+          break;
+        case 8:
+          hash = (37 * hash) + ACK_FIELD_NUMBER;
+          hash = (53 * hash) + getAck().hashCode();
           break;
         case 0:
         default:
@@ -958,6 +1055,13 @@ public final class ProtoMsg {
             result.body_ = msgBuilder_.build();
           }
         }
+        if (bodyCase_ == 8) {
+          if (ackBuilder_ == null) {
+            result.body_ = body_;
+          } else {
+            result.body_ = ackBuilder_.build();
+          }
+        }
         result.bodyCase_ = bodyCase_;
         onBuilt();
         return result;
@@ -1032,6 +1136,10 @@ public final class ProtoMsg {
           }
           case MSG: {
             mergeMsg(other.getMsg());
+            break;
+          }
+          case ACK: {
+            mergeAck(other.getAck());
             break;
           }
           case BODY_NOT_SET: {
@@ -1784,6 +1892,142 @@ public final class ProtoMsg {
         bodyCase_ = 7;
         onChanged();;
         return msgBuilder_;
+      }
+
+      private com.google.protobuf.SingleFieldBuilderV3<
+          ProtoMsg.Ack, ProtoMsg.Ack.Builder, ProtoMsg.AckOrBuilder> ackBuilder_;
+      /**
+       * <code>.Ack ack = 8;</code>
+       */
+      public boolean hasAck() {
+        return bodyCase_ == 8;
+      }
+      /**
+       * <code>.Ack ack = 8;</code>
+       */
+      public ProtoMsg.Ack getAck() {
+        if (ackBuilder_ == null) {
+          if (bodyCase_ == 8) {
+            return (ProtoMsg.Ack) body_;
+          }
+          return ProtoMsg.Ack.getDefaultInstance();
+        } else {
+          if (bodyCase_ == 8) {
+            return ackBuilder_.getMessage();
+          }
+          return ProtoMsg.Ack.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.Ack ack = 8;</code>
+       */
+      public Builder setAck(ProtoMsg.Ack value) {
+        if (ackBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          body_ = value;
+          onChanged();
+        } else {
+          ackBuilder_.setMessage(value);
+        }
+        bodyCase_ = 8;
+        return this;
+      }
+      /**
+       * <code>.Ack ack = 8;</code>
+       */
+      public Builder setAck(
+          ProtoMsg.Ack.Builder builderForValue) {
+        if (ackBuilder_ == null) {
+          body_ = builderForValue.build();
+          onChanged();
+        } else {
+          ackBuilder_.setMessage(builderForValue.build());
+        }
+        bodyCase_ = 8;
+        return this;
+      }
+      /**
+       * <code>.Ack ack = 8;</code>
+       */
+      public Builder mergeAck(ProtoMsg.Ack value) {
+        if (ackBuilder_ == null) {
+          if (bodyCase_ == 8 &&
+              body_ != ProtoMsg.Ack.getDefaultInstance()) {
+            body_ = ProtoMsg.Ack.newBuilder((ProtoMsg.Ack) body_)
+                .mergeFrom(value).buildPartial();
+          } else {
+            body_ = value;
+          }
+          onChanged();
+        } else {
+          if (bodyCase_ == 8) {
+            ackBuilder_.mergeFrom(value);
+          }
+          ackBuilder_.setMessage(value);
+        }
+        bodyCase_ = 8;
+        return this;
+      }
+      /**
+       * <code>.Ack ack = 8;</code>
+       */
+      public Builder clearAck() {
+        if (ackBuilder_ == null) {
+          if (bodyCase_ == 8) {
+            bodyCase_ = 0;
+            body_ = null;
+            onChanged();
+          }
+        } else {
+          if (bodyCase_ == 8) {
+            bodyCase_ = 0;
+            body_ = null;
+          }
+          ackBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>.Ack ack = 8;</code>
+       */
+      public ProtoMsg.Ack.Builder getAckBuilder() {
+        return getAckFieldBuilder().getBuilder();
+      }
+      /**
+       * <code>.Ack ack = 8;</code>
+       */
+      public ProtoMsg.AckOrBuilder getAckOrBuilder() {
+        if ((bodyCase_ == 8) && (ackBuilder_ != null)) {
+          return ackBuilder_.getMessageOrBuilder();
+        } else {
+          if (bodyCase_ == 8) {
+            return (ProtoMsg.Ack) body_;
+          }
+          return ProtoMsg.Ack.getDefaultInstance();
+        }
+      }
+      /**
+       * <code>.Ack ack = 8;</code>
+       */
+      private com.google.protobuf.SingleFieldBuilderV3<
+          ProtoMsg.Ack, ProtoMsg.Ack.Builder, ProtoMsg.AckOrBuilder> 
+          getAckFieldBuilder() {
+        if (ackBuilder_ == null) {
+          if (!(bodyCase_ == 8)) {
+            body_ = ProtoMsg.Ack.getDefaultInstance();
+          }
+          ackBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+              ProtoMsg.Ack, ProtoMsg.Ack.Builder, ProtoMsg.AckOrBuilder>(
+                  (ProtoMsg.Ack) body_,
+                  getParentForChildren(),
+                  isClean());
+          body_ = null;
+        }
+        bodyCase_ = 8;
+        onChanged();;
+        return ackBuilder_;
       }
       @java.lang.Override
       public final Builder setUnknownFields(
@@ -4174,6 +4418,693 @@ public final class ProtoMsg {
 
   }
 
+  public interface AckOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:Ack)
+      com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string from = 1;</code>
+     */
+    java.lang.String getFrom();
+    /**
+     * <code>string from = 1;</code>
+     */
+    com.google.protobuf.ByteString
+        getFromBytes();
+
+    /**
+     * <code>string to = 2;</code>
+     */
+    java.lang.String getTo();
+    /**
+     * <code>string to = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getToBytes();
+  }
+  /**
+   * Protobuf type {@code Ack}
+   */
+  public  static final class Ack extends
+      com.google.protobuf.GeneratedMessageV3 implements
+      // @@protoc_insertion_point(message_implements:Ack)
+      AckOrBuilder {
+  private static final long serialVersionUID = 0L;
+    // Use Ack.newBuilder() to construct.
+    private Ack(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      super(builder);
+    }
+    private Ack() {
+      from_ = "";
+      to_ = "";
+    }
+
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+    getUnknownFields() {
+      return this.unknownFields;
+    }
+    private Ack(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      this();
+      if (extensionRegistry == null) {
+        throw new java.lang.NullPointerException();
+      }
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            case 10: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              from_ = s;
+              break;
+            }
+            case 18: {
+              java.lang.String s = input.readStringRequireUtf8();
+
+              to_ = s;
+              break;
+            }
+            default: {
+              if (!parseUnknownFieldProto3(
+                  input, unknownFields, extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
+      }
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return ProtoMsg.internal_static_Ack_descriptor;
+    }
+
+    @java.lang.Override
+    protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return ProtoMsg.internal_static_Ack_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              ProtoMsg.Ack.class, ProtoMsg.Ack.Builder.class);
+    }
+
+    public static final int FROM_FIELD_NUMBER = 1;
+    private volatile java.lang.Object from_;
+    /**
+     * <code>string from = 1;</code>
+     */
+    public java.lang.String getFrom() {
+      java.lang.Object ref = from_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        from_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string from = 1;</code>
+     */
+    public com.google.protobuf.ByteString
+        getFromBytes() {
+      java.lang.Object ref = from_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        from_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TO_FIELD_NUMBER = 2;
+    private volatile java.lang.Object to_;
+    /**
+     * <code>string to = 2;</code>
+     */
+    public java.lang.String getTo() {
+      java.lang.Object ref = to_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        to_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string to = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getToBytes() {
+      java.lang.Object ref = to_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        to_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    private byte memoizedIsInitialized = -1;
+    @java.lang.Override
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
+
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    @java.lang.Override
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      if (!getFromBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, from_);
+      }
+      if (!getToBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, to_);
+      }
+      unknownFields.writeTo(output);
+    }
+
+    @java.lang.Override
+    public int getSerializedSize() {
+      int size = memoizedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (!getFromBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, from_);
+      }
+      if (!getToBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, to_);
+      }
+      size += unknownFields.getSerializedSize();
+      memoizedSize = size;
+      return size;
+    }
+
+    @java.lang.Override
+    public boolean equals(final java.lang.Object obj) {
+      if (obj == this) {
+       return true;
+      }
+      if (!(obj instanceof ProtoMsg.Ack)) {
+        return super.equals(obj);
+      }
+      ProtoMsg.Ack other = (ProtoMsg.Ack) obj;
+
+      boolean result = true;
+      result = result && getFrom()
+          .equals(other.getFrom());
+      result = result && getTo()
+          .equals(other.getTo());
+      result = result && unknownFields.equals(other.unknownFields);
+      return result;
+    }
+
+    @java.lang.Override
+    public int hashCode() {
+      if (memoizedHashCode != 0) {
+        return memoizedHashCode;
+      }
+      int hash = 41;
+      hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + FROM_FIELD_NUMBER;
+      hash = (53 * hash) + getFrom().hashCode();
+      hash = (37 * hash) + TO_FIELD_NUMBER;
+      hash = (53 * hash) + getTo().hashCode();
+      hash = (29 * hash) + unknownFields.hashCode();
+      memoizedHashCode = hash;
+      return hash;
+    }
+
+    public static ProtoMsg.Ack parseFrom(
+        java.nio.ByteBuffer data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static ProtoMsg.Ack parseFrom(
+        java.nio.ByteBuffer data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static ProtoMsg.Ack parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static ProtoMsg.Ack parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static ProtoMsg.Ack parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static ProtoMsg.Ack parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static ProtoMsg.Ack parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static ProtoMsg.Ack parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static ProtoMsg.Ack parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input);
+    }
+    public static ProtoMsg.Ack parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
+    }
+    public static ProtoMsg.Ack parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input);
+    }
+    public static ProtoMsg.Ack parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return com.google.protobuf.GeneratedMessageV3
+          .parseWithIOException(PARSER, input, extensionRegistry);
+    }
+
+    @java.lang.Override
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder() {
+      return DEFAULT_INSTANCE.toBuilder();
+    }
+    public static Builder newBuilder(ProtoMsg.Ack prototype) {
+      return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
+    }
+    @java.lang.Override
+    public Builder toBuilder() {
+      return this == DEFAULT_INSTANCE
+          ? new Builder() : new Builder().mergeFrom(this);
+    }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code Ack}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:Ack)
+        ProtoMsg.AckOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return ProtoMsg.internal_static_Ack_descriptor;
+      }
+
+      @java.lang.Override
+      protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return ProtoMsg.internal_static_Ack_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                ProtoMsg.Ack.class, ProtoMsg.Ack.Builder.class);
+      }
+
+      // Construct using ProtoMsg.Ack.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessageV3
+                .alwaysUseFieldBuilders) {
+        }
+      }
+      @java.lang.Override
+      public Builder clear() {
+        super.clear();
+        from_ = "";
+
+        to_ = "";
+
+        return this;
+      }
+
+      @java.lang.Override
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return ProtoMsg.internal_static_Ack_descriptor;
+      }
+
+      @java.lang.Override
+      public ProtoMsg.Ack getDefaultInstanceForType() {
+        return ProtoMsg.Ack.getDefaultInstance();
+      }
+
+      @java.lang.Override
+      public ProtoMsg.Ack build() {
+        ProtoMsg.Ack result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      @java.lang.Override
+      public ProtoMsg.Ack buildPartial() {
+        ProtoMsg.Ack result = new ProtoMsg.Ack(this);
+        result.from_ = from_;
+        result.to_ = to_;
+        onBuilt();
+        return result;
+      }
+
+      @java.lang.Override
+      public Builder clone() {
+        return (Builder) super.clone();
+      }
+      @java.lang.Override
+      public Builder setField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.setField(field, value);
+      }
+      @java.lang.Override
+      public Builder clearField(
+          com.google.protobuf.Descriptors.FieldDescriptor field) {
+        return (Builder) super.clearField(field);
+      }
+      @java.lang.Override
+      public Builder clearOneof(
+          com.google.protobuf.Descriptors.OneofDescriptor oneof) {
+        return (Builder) super.clearOneof(oneof);
+      }
+      @java.lang.Override
+      public Builder setRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          int index, java.lang.Object value) {
+        return (Builder) super.setRepeatedField(field, index, value);
+      }
+      @java.lang.Override
+      public Builder addRepeatedField(
+          com.google.protobuf.Descriptors.FieldDescriptor field,
+          java.lang.Object value) {
+        return (Builder) super.addRepeatedField(field, value);
+      }
+      @java.lang.Override
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof ProtoMsg.Ack) {
+          return mergeFrom((ProtoMsg.Ack)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(ProtoMsg.Ack other) {
+        if (other == ProtoMsg.Ack.getDefaultInstance()) return this;
+        if (!other.getFrom().isEmpty()) {
+          from_ = other.from_;
+          onChanged();
+        }
+        if (!other.getTo().isEmpty()) {
+          to_ = other.to_;
+          onChanged();
+        }
+        this.mergeUnknownFields(other.unknownFields);
+        onChanged();
+        return this;
+      }
+
+      @java.lang.Override
+      public final boolean isInitialized() {
+        return true;
+      }
+
+      @java.lang.Override
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        ProtoMsg.Ack parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (ProtoMsg.Ack) e.getUnfinishedMessage();
+          throw e.unwrapIOException();
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+
+      private java.lang.Object from_ = "";
+      /**
+       * <code>string from = 1;</code>
+       */
+      public java.lang.String getFrom() {
+        java.lang.Object ref = from_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          from_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string from = 1;</code>
+       */
+      public com.google.protobuf.ByteString
+          getFromBytes() {
+        java.lang.Object ref = from_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          from_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string from = 1;</code>
+       */
+      public Builder setFrom(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        from_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string from = 1;</code>
+       */
+      public Builder clearFrom() {
+        
+        from_ = getDefaultInstance().getFrom();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string from = 1;</code>
+       */
+      public Builder setFromBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        from_ = value;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object to_ = "";
+      /**
+       * <code>string to = 2;</code>
+       */
+      public java.lang.String getTo() {
+        java.lang.Object ref = to_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          to_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string to = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getToBytes() {
+        java.lang.Object ref = to_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          to_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string to = 2;</code>
+       */
+      public Builder setTo(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  
+        to_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string to = 2;</code>
+       */
+      public Builder clearTo() {
+        
+        to_ = getDefaultInstance().getTo();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string to = 2;</code>
+       */
+      public Builder setToBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+        
+        to_ = value;
+        onChanged();
+        return this;
+      }
+      @java.lang.Override
+      public final Builder setUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.setUnknownFieldsProto3(unknownFields);
+      }
+
+      @java.lang.Override
+      public final Builder mergeUnknownFields(
+          final com.google.protobuf.UnknownFieldSet unknownFields) {
+        return super.mergeUnknownFields(unknownFields);
+      }
+
+
+      // @@protoc_insertion_point(builder_scope:Ack)
+    }
+
+    // @@protoc_insertion_point(class_scope:Ack)
+    private static final ProtoMsg.Ack DEFAULT_INSTANCE;
+    static {
+      DEFAULT_INSTANCE = new ProtoMsg.Ack();
+    }
+
+    public static ProtoMsg.Ack getDefaultInstance() {
+      return DEFAULT_INSTANCE;
+    }
+
+    private static final com.google.protobuf.Parser<Ack>
+        PARSER = new com.google.protobuf.AbstractParser<Ack>() {
+      @java.lang.Override
+      public Ack parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new Ack(input, extensionRegistry);
+      }
+    };
+
+    public static com.google.protobuf.Parser<Ack> parser() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<Ack> getParserForType() {
+      return PARSER;
+    }
+
+    @java.lang.Override
+    public ProtoMsg.Ack getDefaultInstanceForType() {
+      return DEFAULT_INSTANCE;
+    }
+
+  }
+
   private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_Message_descriptor;
   private static final 
@@ -4199,6 +5130,11 @@ public final class ProtoMsg {
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
       internal_static_Msg_fieldAccessorTable;
+  private static final com.google.protobuf.Descriptors.Descriptor
+    internal_static_Ack_descriptor;
+  private static final 
+    com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
+      internal_static_Ack_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -4208,20 +5144,22 @@ public final class ProtoMsg {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\016ProtoMsg.proto\"\344\002\n\007Message\022\033\n\004type\030\001 \001" +
+      "\n\016ProtoMsg.proto\"\245\003\n\007Message\022\033\n\004type\030\001 \001" +
       "(\0162\r.Message.Type\022\021\n\tsessionId\030\002 \001(\t\022\020\n\010" +
       "sequence\030\003 \001(\003\022%\n\014notification\030\004 \001(\0132\r.N" +
       "otificationH\000\022%\n\014shakeHandReq\030\005 \001(\0132\r.Sh" +
       "akeHandReqH\000\022\'\n\rshakeHandResp\030\006 \001(\0132\016.Sh" +
-      "akeHandRespH\000\022\023\n\003msg\030\007 \001(\0132\004.MsgH\000\"\202\001\n\004T" +
-      "ype\022\014\n\010PingType\020\000\022\014\n\010PongType\020\001\022\024\n\020Notif" +
-      "icationType\020\002\022\024\n\020ShakeHandReqType\020\003\022\025\n\021S" +
-      "hakeHandRespType\020\004\022\013\n\007MsgType\020\005\022\016\n\nLogou" +
-      "tType\020\006B\006\n\004body\"\034\n\014Notification\022\014\n\004json\030" +
-      "\001 \001(\t\" \n\014ShakeHandReq\022\020\n\010username\030\001 \001(\t\"" +
-      "\017\n\rShakeHandResp\"0\n\003Msg\022\014\n\004from\030\001 \001(\t\022\n\n" +
-      "\002to\030\002 \001(\t\022\017\n\007context\030\003 \001(\tB\014B\010ProtoMsgH\001" +
-      "b\006proto3"
+      "akeHandRespH\000\022\023\n\003msg\030\007 \001(\0132\004.MsgH\000\022\023\n\003ac" +
+      "k\030\010 \001(\0132\004.AckH\000\"\256\001\n\004Type\022\014\n\010PingType\020\000\022\014" +
+      "\n\010PongType\020\001\022\024\n\020NotificationType\020\002\022\024\n\020Sh" +
+      "akeHandReqType\020\003\022\025\n\021ShakeHandRespType\020\004\022" +
+      "\013\n\007MsgType\020\005\022\016\n\nLogoutType\020\006\022\r\n\tIDAskTyp" +
+      "e\020\007\022\016\n\nIDRespType\020\010\022\013\n\007AckType\020\tB\006\n\004body" +
+      "\"\034\n\014Notification\022\014\n\004json\030\001 \001(\t\" \n\014ShakeH" +
+      "andReq\022\020\n\010username\030\001 \001(\t\"\017\n\rShakeHandRes" +
+      "p\"0\n\003Msg\022\014\n\004from\030\001 \001(\t\022\n\n\002to\030\002 \001(\t\022\017\n\007co" +
+      "ntext\030\003 \001(\t\"\037\n\003Ack\022\014\n\004from\030\001 \001(\t\022\n\n\002to\030\002" +
+      " \001(\tB\014B\010ProtoMsgH\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -4240,7 +5178,7 @@ public final class ProtoMsg {
     internal_static_Message_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Message_descriptor,
-        new java.lang.String[] { "Type", "SessionId", "Sequence", "Notification", "ShakeHandReq", "ShakeHandResp", "Msg", "Body", });
+        new java.lang.String[] { "Type", "SessionId", "Sequence", "Notification", "ShakeHandReq", "ShakeHandResp", "Msg", "Ack", "Body", });
     internal_static_Notification_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_Notification_fieldAccessorTable = new
@@ -4265,6 +5203,12 @@ public final class ProtoMsg {
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Msg_descriptor,
         new java.lang.String[] { "From", "To", "Context", });
+    internal_static_Ack_descriptor =
+      getDescriptor().getMessageTypes().get(5);
+    internal_static_Ack_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
+        internal_static_Ack_descriptor,
+        new java.lang.String[] { "From", "To", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -9,6 +9,8 @@ import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.enums.IDGeneratorType;
 import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.exception.IMRuntimeException;
+import com.qingyun.im.common.idGenerator.IDGenerator;
+import com.qingyun.im.common.idGenerator.SnowFlake;
 import com.qingyun.im.common.util.IOUtil;
 import com.qingyun.im.server.config.AttributeConfig;
 import com.qingyun.im.server.handle.*;
@@ -57,6 +59,9 @@ public class ImServer {
     private ImWorker imWorker;
 
     @Autowired
+    private SnowFlake idGenerator;
+
+    @Autowired
     private ZKListener listener;
 
     @Autowired
@@ -70,6 +75,9 @@ public class ImServer {
 
     @Autowired
     private ShakeHandReqHandle handReqHandle;
+
+    @Autowired
+    private IDAskHandle idAskHandle;
 
     @Autowired
     private ChatMsgHandle chatMsgHandle;
@@ -110,6 +118,7 @@ public class ImServer {
                                 .addLast("heartBeatHandle", heartBeatHandle)
                                 .addLast("notificationHandler", notificationHandler)
                                 .addLast("handReqHandle", handReqHandle)
+                                .addLast("idAskHandle", idAskHandle)
                                 .addLast("chatMsgHandle", chatMsgHandle)
                                 .addLast("logoutHandle", logoutHandle)
                                 .addLast("exceptionHandler", exceptionHandler);
@@ -145,11 +154,13 @@ public class ImServer {
             }
             //  6.注册该Server下线时的钩子函数，执行一些关闭前的操作
             Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownTask()));
-            //  7.更新ZK结点的状态为可用，可以接收客户端连接了
+            //  7.设置雪花算法生成器的机器编号
+            idGenerator.init(0, imWorker.getImNode().getId());
+            //  8.更新ZK结点的状态为可用，可以接收客户端连接了
             imWorker.getImNode().setReady(true);
             curatorZKClient.setNodeData(imWorker.getPathRegistered(), JSON.toJSONBytes(imWorker.getImNode()));
             log.info("结点{}启动成功", imWorker.getImNode().getId());
-            //  8.等待服务端监听端口关闭
+            //  9.等待服务端监听端口关闭
             future.channel().closeFuture().sync();
         } catch (Exception e) {
             e.printStackTrace();

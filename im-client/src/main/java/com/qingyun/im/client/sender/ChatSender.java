@@ -1,13 +1,17 @@
 package com.qingyun.im.client.sender;
 
+import com.qingyun.im.client.handle.IDRespHandle;
 import com.qingyun.im.client.imClient.ClientSession;
 import com.qingyun.im.client.protoBuilder.ChatMsgBuilder;
+import com.qingyun.im.client.protoBuilder.IDAskMsgBuilder;
 import com.qingyun.im.common.entity.ProtoMsg;
-import com.qingyun.im.common.enums.IDGeneratorType;
-import com.qingyun.im.common.idGenerator.IDGenerator;
-import com.qingyun.im.common.idGenerator.SnowFlake;
+import com.qingyun.im.common.enums.Exceptions;
+import com.qingyun.im.common.exception.IMException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @description： 发送聊天消息
@@ -18,27 +22,36 @@ import org.springframework.stereotype.Component;
 public class ChatSender extends BaseSender {
     private ClientSession session;
 
-    /**
-     * 用于产生消息id的ID生成器，这里使用雪花算法
-     */
-    private final SnowFlake idGenerator;
+    @Autowired
+    private IDRespHandle idRespHandle;
 
     @Autowired
     public ChatSender(ClientSession session) {
         super(session);
         this.session = session;
-        idGenerator = (SnowFlake) IDGenerator.getInstance(IDGeneratorType.SNOW_FLAKE.getType());
     }
 
     /**
      * 发送聊天消息
      */
-    public void sendChatMsg(String to, String context) {
-        //  使用雪花算法生成消息的序列号
-        long sequence = idGenerator.generatorLongID();
+    public void sendChatMsg(String to, String context) throws IMException {
+        //  阻塞式向服务端申请消息唯一id
+        CompletableFuture<Long> idWait = new CompletableFuture<>();
+        idRespHandle.setIdWait(idWait);
+        //  向服务端发送ID申请消息
+        super.sendMsg(IDAskMsgBuilder.buildIDAskMsg());
+        Long sequence = null;
+        try {
+            //  阻塞等待
+            sequence = idWait.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new IMException(Exceptions.GET_ID_ERROR.getCode(), Exceptions.GET_ID_ERROR.getMessage());
+        }
+
         //  构建聊天消息
         ProtoMsg.Message chatMsg = ChatMsgBuilder.buildChatMsg(session.getUserInfo().getUsername(), to, context,
                 session.getSessionId(), sequence);
+        //  异步发送聊天消息
         super.sendMsg(chatMsg);
     }
 }

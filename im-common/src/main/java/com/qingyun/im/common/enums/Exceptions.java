@@ -22,6 +22,7 @@ public enum Exceptions {
     INTERRUPT(1007, "异常中断"),
     CREATE_FILE_ERROR(1008, "创建文件出错"),
     READ_FILE_ERROR(1009, "读取文件时失败"),
+    GET_ID_ERROR(1010, "申请id失败"),
     HTTP_ERROR(2000, "发送HTTP请求时出错"),
     LOGIN_ERROR(2001, "登录失败"),
     REGISTER_ERROR(2002, "注册失败"),

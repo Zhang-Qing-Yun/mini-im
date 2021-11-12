@@ -1,5 +1,8 @@
 package com.qingyun.im.server.config;
 
+import com.qingyun.im.common.enums.IDGeneratorType;
+import com.qingyun.im.common.idGenerator.IDGenerator;
+import com.qingyun.im.common.idGenerator.SnowFlake;
 import com.qingyun.im.common.zk.CuratorZKClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -20,5 +23,10 @@ public class ServerConfig {
     @Bean
     public CuratorZKClient curatorZKClient() {
         return new CuratorZKClient(connectString).init();
+    }
+
+    @Bean
+    public SnowFlake idGenerator() {
+        return (SnowFlake) IDGenerator.getInstance(IDGeneratorType.SNOW_FLAKE.getType());
     }
 }
