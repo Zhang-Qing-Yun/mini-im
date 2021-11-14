@@ -14,7 +14,8 @@ public class ChatMsgBuilder {
         ProtoMsg.Msg.Builder cb = ProtoMsg.Msg.newBuilder()
                 .setFrom(from)
                 .setTo(to)
-                .setContext(context);
+                .setContext(context)
+                .setDatetime(System.currentTimeMillis());
 
         ProtoMsg.Message.Builder mb = ProtoMsg.Message.newBuilder()
                 .setType(ProtoMsg.Message.Type.MsgType)

@@ -3627,6 +3627,11 @@ public final class ProtoMsg {
      */
     com.google.protobuf.ByteString
         getContextBytes();
+
+    /**
+     * <code>int64 datetime = 4;</code>
+     */
+    long getDatetime();
   }
   /**
    * Protobuf type {@code Msg}
@@ -3644,6 +3649,7 @@ public final class ProtoMsg {
       from_ = "";
       to_ = "";
       context_ = "";
+      datetime_ = 0L;
     }
 
     @java.lang.Override
@@ -3686,6 +3692,11 @@ public final class ProtoMsg {
               java.lang.String s = input.readStringRequireUtf8();
 
               context_ = s;
+              break;
+            }
+            case 32: {
+
+              datetime_ = input.readInt64();
               break;
             }
             default: {
@@ -3822,6 +3833,15 @@ public final class ProtoMsg {
       }
     }
 
+    public static final int DATETIME_FIELD_NUMBER = 4;
+    private long datetime_;
+    /**
+     * <code>int64 datetime = 4;</code>
+     */
+    public long getDatetime() {
+      return datetime_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -3845,6 +3865,9 @@ public final class ProtoMsg {
       if (!getContextBytes().isEmpty()) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, context_);
       }
+      if (datetime_ != 0L) {
+        output.writeInt64(4, datetime_);
+      }
       unknownFields.writeTo(output);
     }
 
@@ -3862,6 +3885,10 @@ public final class ProtoMsg {
       }
       if (!getContextBytes().isEmpty()) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, context_);
+      }
+      if (datetime_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(4, datetime_);
       }
       size += unknownFields.getSerializedSize();
       memoizedSize = size;
@@ -3885,6 +3912,8 @@ public final class ProtoMsg {
           .equals(other.getTo());
       result = result && getContext()
           .equals(other.getContext());
+      result = result && (getDatetime()
+          == other.getDatetime());
       result = result && unknownFields.equals(other.unknownFields);
       return result;
     }
@@ -3902,6 +3931,9 @@ public final class ProtoMsg {
       hash = (53 * hash) + getTo().hashCode();
       hash = (37 * hash) + CONTEXT_FIELD_NUMBER;
       hash = (53 * hash) + getContext().hashCode();
+      hash = (37 * hash) + DATETIME_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getDatetime());
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -4041,6 +4073,8 @@ public final class ProtoMsg {
 
         context_ = "";
 
+        datetime_ = 0L;
+
         return this;
       }
 
@@ -4070,6 +4104,7 @@ public final class ProtoMsg {
         result.from_ = from_;
         result.to_ = to_;
         result.context_ = context_;
+        result.datetime_ = datetime_;
         onBuilt();
         return result;
       }
@@ -4129,6 +4164,9 @@ public final class ProtoMsg {
         if (!other.getContext().isEmpty()) {
           context_ = other.context_;
           onChanged();
+        }
+        if (other.getDatetime() != 0L) {
+          setDatetime(other.getDatetime());
         }
         this.mergeUnknownFields(other.unknownFields);
         onChanged();
@@ -4362,6 +4400,32 @@ public final class ProtoMsg {
   checkByteStringIsUtf8(value);
         
         context_ = value;
+        onChanged();
+        return this;
+      }
+
+      private long datetime_ ;
+      /**
+       * <code>int64 datetime = 4;</code>
+       */
+      public long getDatetime() {
+        return datetime_;
+      }
+      /**
+       * <code>int64 datetime = 4;</code>
+       */
+      public Builder setDatetime(long value) {
+        
+        datetime_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int64 datetime = 4;</code>
+       */
+      public Builder clearDatetime() {
+        
+        datetime_ = 0L;
         onChanged();
         return this;
       }
@@ -5157,9 +5221,10 @@ public final class ProtoMsg {
       "e\020\007\022\016\n\nIDRespType\020\010\022\013\n\007AckType\020\tB\006\n\004body" +
       "\"\034\n\014Notification\022\014\n\004json\030\001 \001(\t\" \n\014ShakeH" +
       "andReq\022\020\n\010username\030\001 \001(\t\"\017\n\rShakeHandRes" +
-      "p\"0\n\003Msg\022\014\n\004from\030\001 \001(\t\022\n\n\002to\030\002 \001(\t\022\017\n\007co" +
-      "ntext\030\003 \001(\t\"\037\n\003Ack\022\014\n\004from\030\001 \001(\t\022\n\n\002to\030\002" +
-      " \001(\tB\014B\010ProtoMsgH\001b\006proto3"
+      "p\"B\n\003Msg\022\014\n\004from\030\001 \001(\t\022\n\n\002to\030\002 \001(\t\022\017\n\007co" +
+      "ntext\030\003 \001(\t\022\020\n\010datetime\030\004 \001(\003\"\037\n\003Ack\022\014\n\004" +
+      "from\030\001 \001(\t\022\n\n\002to\030\002 \001(\tB\014B\010ProtoMsgH\001b\006pr" +
+      "oto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -5202,7 +5267,7 @@ public final class ProtoMsg {
     internal_static_Msg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_Msg_descriptor,
-        new java.lang.String[] { "From", "To", "Context", });
+        new java.lang.String[] { "From", "To", "Context", "Datetime", });
     internal_static_Ack_descriptor =
       getDescriptor().getMessageTypes().get(5);
     internal_static_Ack_fieldAccessorTable = new

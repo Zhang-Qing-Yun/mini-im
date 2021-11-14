@@ -47,6 +47,7 @@ message Msg {
     string from = 1;
     string to = 2;
     string context = 3;
+    int64 datetime = 4;
 }
 
 message Ack {

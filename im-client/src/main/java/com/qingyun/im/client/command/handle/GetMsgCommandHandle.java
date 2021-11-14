@@ -8,7 +8,8 @@ import com.qingyun.im.common.exception.IMException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @description： 获取来自某个好友的未读消息列表
@@ -45,9 +46,29 @@ public class GetMsgCommandHandle implements CommandHandle {
         String username = parseValue[1];
 
         Collection<ProtoMsg.Message> messages = manager.readMsgFromFriend(username);
+        if (messages == null || messages.isEmpty()) {
+            System.out.println("没有该好友的未读消息");
+            return;
+        }
+        //  对消息按照时间进行排序
+        ProtoMsg.Message[] msgArr = messages.toArray(new ProtoMsg.Message[0]);
+        Arrays.sort(msgArr, new Comparator<ProtoMsg.Message>() {
+            @Override
+            public int compare(ProtoMsg.Message o1, ProtoMsg.Message o2) {
+                if (o1.getMsg().getDatetime() < o2.getMsg().getDatetime()) {
+                    return -1;
+                } else if (o1.getMsg().getDatetime() > o2.getMsg().getDatetime()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         System.out.println("该好友发送的未读消息如下：");
-        for (ProtoMsg.Message message: messages) {
-            System.out.println(message.getMsg().getContext());
+        for (ProtoMsg.Message message: msgArr) {
+            System.out.println(format.format(new Date(message.getMsg().getDatetime())) + "："
+                    + message.getMsg().getContext());
         }
     }
 }
