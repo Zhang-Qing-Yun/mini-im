@@ -26,6 +26,9 @@ public class ChatSender extends BaseSender {
     private IDRespHandle idRespHandle;
 
     @Autowired
+    private MsgTimeoutTimerManager manager;
+
+    @Autowired
     public ChatSender(ClientSession session) {
         super(session);
         this.session = session;
@@ -38,7 +41,7 @@ public class ChatSender extends BaseSender {
         //  阻塞式向服务端申请消息唯一id
         CompletableFuture<Long> idWait = new CompletableFuture<>();
         idRespHandle.setIdWait(idWait);
-        //  向服务端发送ID申请消息
+        //  向服务端发送ID申请消息，这里涉及到一次网络开销
         super.sendMsg(IDAskMsgBuilder.buildIDAskMsg());
         Long sequence = null;
         try {
@@ -51,6 +54,8 @@ public class ChatSender extends BaseSender {
         //  构建聊天消息
         ProtoMsg.Message chatMsg = ChatMsgBuilder.buildChatMsg(session.getUserInfo().getUsername(), to, context,
                 session.getSessionId(), sequence);
+        //  将该消息添加到超时重传管理器
+        manager.add(chatMsg);
         //  异步发送聊天消息
         super.sendMsg(chatMsg);
     }

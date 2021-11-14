@@ -22,7 +22,7 @@ public class ClientSession {
     private boolean isLogin = false;
 
     //  是否已经和NettyServer建立了连接
-    private boolean isConnected = false;
+    private volatile boolean isConnected = false;
 
     //  登录的用户信息
     private UserInfo userInfo;

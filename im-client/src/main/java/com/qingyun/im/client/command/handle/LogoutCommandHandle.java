@@ -2,8 +2,10 @@ package com.qingyun.im.client.command.handle;
 
 import com.qingyun.im.client.annotation.LoginRequired;
 import com.qingyun.im.client.command.Command;
+import com.qingyun.im.client.msgCache.AvoidRepeatManager;
 import com.qingyun.im.client.msgCache.MsgCacheManager;
 import com.qingyun.im.client.sender.LogoutSender;
+import com.qingyun.im.client.sender.MsgTimeoutTimerManager;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.exception.IMException;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +25,13 @@ public class LogoutCommandHandle implements CommandHandle {
     private MsgCacheManager manager;
 
     @Autowired
+    private AvoidRepeatManager avoidRepeatManager;
+
+    @Autowired
     private LogoutSender logoutSender;
+
+    @Autowired
+    private MsgTimeoutTimerManager timeoutTimerManager;
 
     @Override
     public boolean isCare(String commandValue) {
@@ -44,9 +52,12 @@ public class LogoutCommandHandle implements CommandHandle {
             throw new IMException(Exceptions.PARSE_ERROR.getCode(), Exceptions.PARSE_ERROR.getMessage());
         }
 
-        //  持久化内存中的消息
+        //  持久化内存中的消息和防重集合
         System.out.println("正在保存内存中的消息，请不要关闭程序");
         manager.persistMsg();
+        avoidRepeatManager.finishAndPersist();
+        //  处理正在发送中的消息（即没有收到ack的消息），这里阻塞死等所有的消息都被ack或者超过重传次数（发送失败）
+        timeoutTimerManager.await();
         System.out.println("保存完毕");
         //  向服务端发送退出消息
         logoutSender.sendLogoutMsg();

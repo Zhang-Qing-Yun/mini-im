@@ -7,6 +7,7 @@ import com.qingyun.im.client.command.CommandContext;
 import com.qingyun.im.client.config.AttributeConfig;
 import com.qingyun.im.client.handle.*;
 import com.qingyun.im.client.loadBalancer.LoadBalancer;
+import com.qingyun.im.client.msgCache.AvoidRepeatManager;
 import com.qingyun.im.client.msgCache.MsgCacheManager;
 import com.qingyun.im.client.pojo.UserInfo;
 import com.qingyun.im.client.sender.ShakeHandSender;
@@ -21,7 +22,6 @@ import com.qingyun.im.common.enums.LoadBalancerType;
 import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.exception.IMRuntimeException;
 import com.qingyun.im.common.util.HttpClient;
-import com.qingyun.im.common.util.LogoUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -52,6 +52,13 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Slf4j
 public class ImClient {
+    /*
+    * 对于客户端来说：
+    *       1.如果客户端意外宕机，则存在于内存中还未查看的消息、防重集合没有来得及持久化，
+    *    所以这些消息会丢失掉，并且下次上线时无法对离线消息去重，可能会接收到已经接收过的消息；
+    *       2.如果客户端主动下线，会对消息、防重集合进行持久化，并且会阻塞等待至所有的消息都收到ack或者不再需要重传（发送失败）；
+    * */
+
     //  用于读取并处理命令的线程
     private Thread commandThread;
 
@@ -63,6 +70,8 @@ public class ImClient {
 
     //  负载均衡策略，默认使用随机负载均衡策略
     private int loadBalancerType = LoadBalancerType.RANDOM.getType();
+
+    private volatile boolean first = true;
 
     //  锁
     private final Object o = new Object();
@@ -93,6 +102,9 @@ public class ImClient {
     private MsgCacheManager msgCacheManager;
 
     @Autowired
+    private AvoidRepeatManager avoidRepeatManager;
+
+    @Autowired
     private AttributeConfig attribute;
 
     @Autowired
@@ -109,6 +121,9 @@ public class ImClient {
 
     @Autowired
     private ChatMsgHandle chatMsgHandle;
+
+    @Autowired
+    private AckHandle ackHandle;
 
     @Autowired
     private IDRespHandle idRespHandle;
@@ -150,6 +165,7 @@ public class ImClient {
                                 .addLast("handRespHandle", handRespHandle)
                                 .addLast("idRespHandle", idRespHandle)
                                 .addLast("chatMsgHandle", chatMsgHandle)
+                                .addLast("ackHandle", ackHandle)
                                 .addLast("exceptionHandler", exceptionHandler);
                     }
                 });
@@ -194,10 +210,15 @@ public class ImClient {
         } catch (InterruptedException e) {
             throw new IMRuntimeException(Exceptions.INTERRUPT.getCode(), Exceptions.INTERRUPT.getMessage());
         }
-        //  从持久化中加载消息到内存
-        msgCacheManager.initFromPersistence();
-        //  TODO：加载离线消息
+        //  从持久化中加载消息到内存，只需要在上线时去执行
+        //  对于断线重连的情况，它们依旧在内存中并没有丢失（只有在退出时才会去持久化，断线并不会去执行持久化）
+        if (first) {
+            msgCacheManager.initFromPersistence();
+            avoidRepeatManager.initFromPersistence();
+        }
+        //  TODO：加载离线消息，并使用防重集合去过滤
 
+        first = false;
         log.info("客户端成功连接到【{}】服务器", session.getImNode().getId());
         System.out.println("成功连接到服务器，可以输入命令了");
         //  启动命令线程
@@ -328,6 +349,7 @@ public class ImClient {
         handRespHandle.cancelHeartBeat();
         //  断开与原服务器的连接
         session.getChannel().close();
+        session.setConnected(false);  // 标志当前正在重连中
         //  重新选择一台服务器并建立连接
         start();
     }

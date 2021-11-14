@@ -83,6 +83,9 @@ public class ImServer {
     private ChatMsgHandle chatMsgHandle;
 
     @Autowired
+    private AckHandle ackHandle;
+
+    @Autowired
     private HeartBeatHandle heartBeatHandle;
 
     @Autowired
@@ -120,6 +123,7 @@ public class ImServer {
                                 .addLast("handReqHandle", handReqHandle)
                                 .addLast("idAskHandle", idAskHandle)
                                 .addLast("chatMsgHandle", chatMsgHandle)
+                                .addLast("ackHandle", ackHandle)
                                 .addLast("logoutHandle", logoutHandle)
                                 .addLast("exceptionHandler", exceptionHandler);
                     }
