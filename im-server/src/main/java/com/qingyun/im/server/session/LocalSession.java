@@ -34,7 +34,6 @@ public class LocalSession implements ServerSession{
 
     @Override
     public synchronized void writeAndFlush(Object pkg) {
-        //  TODO：这里应该考虑性能，防止积压
         channel.writeAndFlush(pkg);
     }
 

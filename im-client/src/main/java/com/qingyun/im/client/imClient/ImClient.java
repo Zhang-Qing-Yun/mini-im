@@ -16,11 +16,14 @@ import com.qingyun.im.common.codec.ProtobufDecoder;
 import com.qingyun.im.common.codec.ProtobufEncoder;
 import com.qingyun.im.common.constants.HeartBeatConstants;
 import com.qingyun.im.common.entity.ImNode;
+import com.qingyun.im.common.entity.Msg;
+import com.qingyun.im.common.entity.ProtoMsg;
 import com.qingyun.im.common.entity.R;
 import com.qingyun.im.common.enums.Exceptions;
 import com.qingyun.im.common.enums.LoadBalancerType;
 import com.qingyun.im.common.exception.IMException;
 import com.qingyun.im.common.exception.IMRuntimeException;
+import com.qingyun.im.common.protoBuilder.ChatMsgBuilder;
 import com.qingyun.im.common.util.HttpClient;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -88,6 +91,12 @@ public class ImClient {
 
     @Value("${auth.loginUrl}")
     private String loginUrl;
+
+    @Value("${auth.getOfflineMsg}")
+    private String getOfflineMsgUrl;
+
+    @Value("${auth.ackOfflineMsg}")
+    private String ackOfflineMsgUrl;
 
     @Autowired
     private CommandScan commandScan;
@@ -216,8 +225,12 @@ public class ImClient {
             msgCacheManager.initFromPersistence();
             avoidRepeatManager.initFromPersistence();
         }
-        //  TODO：加载离线消息，并使用防重集合去过滤
-
+        //  加载离线消息，并使用防重集合去过滤
+        try {
+            loadOfflineMsg();
+        } catch (Exception e) {
+            throw new IMRuntimeException(Exceptions.LOAD_OFFLINE_FAIL.getCode(), Exceptions.LOAD_OFFLINE_FAIL.getMessage());
+        }
         first = false;
         log.info("客户端成功连接到【{}】服务器", session.getImNode().getId());
         System.out.println("成功连接到服务器，可以输入命令了");
@@ -375,6 +388,40 @@ public class ImClient {
 
         //  好友列表
         return (List<String>) result.getData().get("friendList");
+    }
+
+    /**
+     * 加载离线消息
+     */
+    private void loadOfflineMsg() throws Exception {
+        //  1.发送Http请求去查询离线消息
+        String username = session.getUserInfo().getUsername();
+        String url = authAddress + getOfflineMsgUrl;
+        Map<String, String> param = new HashMap<>();
+        param.put("username", username);
+        Response response = HttpClient.get(okHttpClient, param, url);
+        //  解析结果
+        String string = response.body().string();
+        R result = JSON.parseObject(string, R.class);
+        if (!result.getSuccess()) {
+            System.out.println(result.getMessage());
+            throw new IMException(Exceptions.LOAD_OFFLINE_FAIL.getCode(), Exceptions.LOAD_OFFLINE_FAIL.getMessage());
+        }
+        String offlineMsgStr = JSON.parseObject(JSON.parseObject(string).getString("data")).getString("offlineMsg");
+        List<Msg> offlineMsg = JSON.parseArray(offlineMsgStr, Msg.class);
+        //  使用防重集合去过滤
+        for (Msg message: offlineMsg) {
+            if (!avoidRepeatManager.contains(message.getId())) {
+                ProtoMsg.Message chatMsg = ChatMsgBuilder.buildChatMsg(message.getFromUsername(), message.getToUsername(),
+                        message.getContext(), "0", message.getId(), message.getSendTime());
+                //  对于不重复的消息则进行接收
+                msgCacheManager.addMsg(chatMsg);
+            }
+        }
+
+        //  2.向服务端确认收到了离线消息
+        url = authAddress + ackOfflineMsgUrl;
+        HttpClient.get(okHttpClient, param, url);
     }
 
 

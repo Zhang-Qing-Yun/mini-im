@@ -34,6 +34,7 @@ public enum Exceptions {
     GET_FRIEND_LIST(2008, "获取用户的好友列表失败"),
     NOT_FRIEND(2009, "没有该好友"),
     LOAD_PERSISTENCE_FAIL(2010, "加载持久化消息失败"),
+    LOAD_OFFLINE_FAIL(2011, "拉取离线消息失败"),
     ZK_NODE(3000, "操作Zookeeper结点时出错"),
     ZK_LISTENER(3001, "设置ZK监听器时出错"),
     ZK_READ_ERROR(3002, "读取ZK结点出错"),

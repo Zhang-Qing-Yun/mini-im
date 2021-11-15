@@ -2,7 +2,7 @@ package com.qingyun.im.client.sender;
 
 import com.qingyun.im.client.handle.IDRespHandle;
 import com.qingyun.im.client.imClient.ClientSession;
-import com.qingyun.im.client.protoBuilder.ChatMsgBuilder;
+import com.qingyun.im.common.protoBuilder.ChatMsgBuilder;
 import com.qingyun.im.client.protoBuilder.IDAskMsgBuilder;
 import com.qingyun.im.common.entity.ProtoMsg;
 import com.qingyun.im.common.enums.Exceptions;
@@ -53,7 +53,7 @@ public class ChatSender extends BaseSender {
 
         //  构建聊天消息
         ProtoMsg.Message chatMsg = ChatMsgBuilder.buildChatMsg(session.getUserInfo().getUsername(), to, context,
-                session.getSessionId(), sequence);
+                session.getSessionId(), sequence, System.currentTimeMillis());
         //  将该消息添加到超时重传管理器
         manager.add(chatMsg);
         //  异步发送聊天消息

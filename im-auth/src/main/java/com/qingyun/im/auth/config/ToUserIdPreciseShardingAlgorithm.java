@@ -1,4 +1,4 @@
-package com.qingyun.im.server.config;
+package com.qingyun.im.auth.config;
 
 import com.qingyun.im.common.constants.ServerConstants;
 import org.apache.shardingsphere.api.sharding.standard.PreciseShardingAlgorithm;
@@ -9,7 +9,7 @@ import java.util.Collection;
 /**
  * @description： 根据消息接收者的id范围对离线消息进行水平分表的分片策略
  * @author: 張青云
- * @create: 2021-11-15 13:45
+ * @create: 2021-11-15 20:37
  **/
 public class ToUserIdPreciseShardingAlgorithm implements PreciseShardingAlgorithm<Long> {
     /**
