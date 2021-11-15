@@ -10,6 +10,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,6 +22,9 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class HeartBeatHandle extends SimpleChannelInboundHandler<ProtoMsg.Message> {
+    @Autowired
+    private SessionManager sessionManager;
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ProtoMsg.Message msg) throws Exception {
         if (msg == null || !msg.getType().equals(ProtoMsg.Message.Type.PingType)) {
@@ -48,6 +52,7 @@ public class HeartBeatHandle extends SimpleChannelInboundHandler<ProtoMsg.Messag
                 String sessionId = ctx.channel().attr(SessionManager.SESSION_ID_KEY).get();
                 log.info("长时间未收到客户端【{}】的心跳消息，断开连接！", sessionId);
                 ctx.close();
+                sessionManager.removeLocalSession(sessionId);
             } else {
                 super.userEventTriggered(ctx, evt);
             }

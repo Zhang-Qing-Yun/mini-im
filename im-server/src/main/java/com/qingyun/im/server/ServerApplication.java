@@ -1,6 +1,7 @@
 package com.qingyun.im.server;
 
 import com.qingyun.im.server.imServer.ImServer;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -11,6 +12,7 @@ import org.springframework.context.ApplicationContext;
  * @create: 2021-10-05 19:37
  **/
 @SpringBootApplication
+@MapperScan("com.qingyun.im.server.Mapper")
 public class ServerApplication {
     public static void main(String[] args) {
         ApplicationContext context = SpringApplication.run(ServerApplication.class, args);

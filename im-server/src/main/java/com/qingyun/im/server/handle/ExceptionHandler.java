@@ -22,6 +22,9 @@ public class ExceptionHandler extends ChannelInboundHandlerAdapter {
     @Autowired
     private RouterMap routerMap;
 
+    @Autowired
+    private SessionManager sessionManager;
+
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         //  判断是否是转发器发生异常
@@ -46,5 +49,6 @@ public class ExceptionHandler extends ChannelInboundHandlerAdapter {
         String sessionId = ctx.channel().attr(SessionManager.SESSION_ID_KEY).get();
         log.info("与客户端【sessionId：{}】发生异常，已关闭与客户端的连接", sessionId);
         ctx.close();
+        sessionManager.removeLocalSession(sessionId);
     }
 }

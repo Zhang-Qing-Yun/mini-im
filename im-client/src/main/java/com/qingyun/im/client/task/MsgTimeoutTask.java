@@ -48,6 +48,8 @@ public class MsgTimeoutTask extends TimerTask {
 
         //  如果当前正在重连中，则本次不进行消息的重传，等下一次重传时如果重连成功再重传
         if (!session.isConnected()){
+            //  当前正在重连中，本次不占用重传次数
+            retryCount--;
             return;
         }
         //  重传消息
