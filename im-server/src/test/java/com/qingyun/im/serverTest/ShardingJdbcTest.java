@@ -3,7 +3,9 @@ package com.qingyun.im.serverTest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qingyun.im.common.entity.Msg;
 import com.qingyun.im.server.Mapper.MsgMapper;
+import com.qingyun.im.server.Mapper.UserMapper;
 import com.qingyun.im.server.ServerApplication;
+import com.qingyun.im.server.entity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ import java.util.List;
 public class ShardingJdbcTest {
     @Autowired
     private MsgMapper msgMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Test
     public void insertTest() {
@@ -45,5 +50,24 @@ public class ShardingJdbcTest {
         w.eq("to_user_id", 10002L);
         List<Msg> msgs = msgMapper.selectList(w);
         System.out.println(msgs);
+    }
+
+    @Test
+    public void getUser() {
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("username", "qingyun");
+        wrapper.select("id");
+        User user = userMapper.selectOne(wrapper);
+        System.out.println(user.getId());
+    }
+
+    @Test
+    public void existTest() {
+        QueryWrapper<Msg> oldMsgWrapper = new QueryWrapper<>();
+        oldMsgWrapper.eq("id", 9276935569932289L);
+        oldMsgWrapper.eq("to_user_id", 2L);
+        oldMsgWrapper.select("id");
+        Msg oldMsg = msgMapper.selectOne(oldMsgWrapper);
+        System.out.println(oldMsg == null);
     }
 }

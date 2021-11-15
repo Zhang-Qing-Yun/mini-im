@@ -3,6 +3,7 @@ package com.qingyun.im.common.entity;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -12,7 +13,9 @@ import java.time.LocalDateTime;
  **/
 @Data
 @Accessors(chain = true)  // 链式编程
-public class Msg {
+public class Msg implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     //  消息的全局唯一id
     private Long id;
 
