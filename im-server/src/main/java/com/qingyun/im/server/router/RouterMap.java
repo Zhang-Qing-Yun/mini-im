@@ -40,6 +40,10 @@ public class RouterMap {
      * @return 转发器
      */
     public Router getRouterByNodeId(long nodeId) {
+        Router candidateRouter = candidateMap.get(nodeId);
+        if (candidateRouter != null) {
+            return candidateRouter;
+        }
         return routerMap.get(nodeId);
     }
 
