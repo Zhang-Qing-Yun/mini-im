@@ -62,7 +62,7 @@ public class RemovedAction implements EventAction{
             //  关闭与该远程结点的连接
             router.stopConnecting();
             //  更新转发表
-            routerMap.removeRouter(id);
+            routerMap.clearRouter(id);
             log.info("检测到结点{}下线，已删除对应的转发器", id);
         }
     }

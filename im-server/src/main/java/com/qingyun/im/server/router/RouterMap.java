@@ -35,6 +35,14 @@ public class RouterMap {
     }
 
     /**
+     * 从转发表和准转发器表中删除某个Router的记录
+     */
+    public void clearRouter(long id) {
+        candidateMap.remove(id);
+        routerMap.remove(id);
+    }
+
+    /**
      * 从转发表中根据结点的id（由ZK生成的）获取对应的转发器
      * @param nodeId id
      * @return 转发器
