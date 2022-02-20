@@ -67,7 +67,7 @@ public class GetMsgCommandHandle implements CommandHandle {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         System.out.println("该好友发送的未读消息如下：");
         for (ProtoMsg.Message message: msgArr) {
-            System.out.println(format.format("【" + new Date(message.getMsg().getDatetime())) + "】"
+            System.out.println("【" + format.format(new Date(message.getMsg().getDatetime())) + "】："
                     + message.getMsg().getContext());
         }
     }
