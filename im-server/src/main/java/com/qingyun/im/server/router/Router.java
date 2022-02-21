@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
  **/
 @Component
 @Scope("prototype")
-public class Router {
+public class Router implements MsgSource {
     //  用来标志一个channel是一个转发器所对应的
     public static final AttributeKey<Long> ROUTER_KEY = AttributeKey.valueOf("router");
 

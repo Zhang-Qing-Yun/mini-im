@@ -1,16 +1,18 @@
 package com.qingyun.im.server.session;
 
+import com.qingyun.im.server.router.MsgSource;
+
 /**
  * @description：
  * @author: 張青云
  * @create: 2021-10-13 18:53
  **/
-public interface ServerSession {
-    /**
-     * 向该session所对应的连接发送消息
-     * @param pkg 消息
-     */
-    void writeAndFlush(Object pkg);
+public interface ServerSession extends MsgSource {
+//    /**
+//     * 向该session所对应的连接发送消息
+//     * @param pkg 消息
+//     */
+//    void writeAndFlush(Object pkg);
 
     /**
      * 获取用户名

@@ -9,6 +9,7 @@ import com.qingyun.im.common.protoBuilder.AckMsgBuilder;
 import com.qingyun.im.server.Mapper.MsgMapper;
 import com.qingyun.im.server.Mapper.UserMapper;
 import com.qingyun.im.server.entity.User;
+import com.qingyun.im.server.router.MsgSource;
 import com.qingyun.im.server.session.LocalSession;
 import com.qingyun.im.server.session.ServerSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class OfflineThreadPoolHandle implements OfflineHandle {
 
 
     @Override
-    public void handleOfflineMsg(ProtoMsg.Message message, ServerSession localSession) {
+    public void handleOfflineMsg(ProtoMsg.Message message, MsgSource msgSource) {
         CallbackTaskScheduler.addIOTarget(new CallbackTask<Boolean>() {
             @Override
             public Boolean execute() throws Exception {
@@ -77,7 +78,7 @@ public class OfflineThreadPoolHandle implements OfflineHandle {
                     //  如果向数据库中插入成功或数据库中已存在，则向客户端回送ACK消息
                     ProtoMsg.Message ackMsg = AckMsgBuilder.buildAckMsg(message.getSequence(), message.getMsg().getFrom(),
                             message.getMsg().getTo());
-                    localSession.writeAndFlush(ackMsg);
+                    msgSource.writeAndFlush(ackMsg);
                 } else {
                     //  如果插入失败不做任何处理，等待客户端重传即可
                 }

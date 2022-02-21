@@ -3,6 +3,7 @@ package com.qingyun.im.server.handle;
 import com.qingyun.im.common.entity.ImNode;
 import com.qingyun.im.common.entity.ProtoMsg;
 import com.qingyun.im.server.OfflineHandle.OfflineHandle;
+import com.qingyun.im.server.router.MsgSource;
 import com.qingyun.im.server.router.Router;
 import com.qingyun.im.server.router.RouterMap;
 import com.qingyun.im.server.session.ServerSession;
@@ -47,15 +48,20 @@ public class ChatMsgHandle extends SimpleChannelInboundHandler<ProtoMsg.Message>
         }
 
         //  获取当前服务器与消息发送方之间的会话连接
+        MsgSource msgSource = null;
         String localSessionId = ctx.channel().attr(SessionManager.SESSION_ID_KEY).get();
-        ServerSession localSession = sessionManager.getLocalSession(localSessionId);
+        if (localSessionId != null) {
+            msgSource = sessionManager.getLocalSession(localSessionId);
+        } else {
+            msgSource = routerMap.getRouterByNodeId(ctx.channel().attr(Router.ROUTER_KEY).get());
+        }
         //  获取目标用户的session
         String toUsername = msg.getMsg().getTo();
         SessionCache userSessionCache = sessionManager.getUserSessionCache(toUsername);
         //  用户不在线
         if (userSessionCache == null) {
             //  处理离线消息
-            handleOfflineMsg(msg, localSession);
+            handleOfflineMsg(msg, msgSource);
             return;
         }
 
@@ -70,19 +76,19 @@ public class ChatMsgHandle extends SimpleChannelInboundHandler<ProtoMsg.Message>
                 serverSession.writeAndFlush(msg);
             } else {
                 //  与客户端断线了
-                handleOfflineMsg(msg, localSession);
+                handleOfflineMsg(msg, msgSource);
             }
             return;
         }
         //  将消息转发给目的用户所连接的服务器
         sessionCache = sessionCacheDao.get(sessionId);
-        transferMsg(sessionCache, msg, localSession);
+        transferMsg(sessionCache, msg, msgSource);
     }
 
     /**
      * 将消息转发给目的Server
      */
-    private void transferMsg(SessionCache sessionCache, ProtoMsg.Message msg, ServerSession localSession) {
+    private void transferMsg(SessionCache sessionCache, ProtoMsg.Message msg, MsgSource msgSource) {
         //  获取接收者所连接的Server
         ImNode imNode = sessionCache.getImNode();
         //  获取转发器
@@ -95,7 +101,7 @@ public class ChatMsgHandle extends SimpleChannelInboundHandler<ProtoMsg.Message>
         * 当目标用户发现自己和服务端断连后会重连，然后会拉取离线消息
         * */
         if (router == null || !router.isActive()) {
-            handleOfflineMsg(msg, localSession);
+            handleOfflineMsg(msg, msgSource);
             return;
         }
         //  转发消息
@@ -105,9 +111,9 @@ public class ChatMsgHandle extends SimpleChannelInboundHandler<ProtoMsg.Message>
     /**
      * 处理离线消息
      */
-    private void handleOfflineMsg(ProtoMsg.Message msg, ServerSession localSession) {
+    private void handleOfflineMsg(ProtoMsg.Message msg, MsgSource msgSource) {
         log.info("用户【{}】不在线，消息【{}：{}】被当作离线消息处理",
                 msg.getMsg().getTo(), msg.getSequence(), msg.getMsg().getContext());
-        offlineHandle.handleOfflineMsg(msg, localSession);
+        offlineHandle.handleOfflineMsg(msg, msgSource);
     }
 }
