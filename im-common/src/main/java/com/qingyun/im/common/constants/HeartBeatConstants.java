@@ -9,7 +9,7 @@ public interface HeartBeatConstants {
     /**
      * 发送Ping消息的时间间隔，单位毫秒
      */
-    long PING_INTERVAL = 5000;
+    long PING_INTERVAL = 3000;
 
     /**
      * 读空闲的时间，单位秒

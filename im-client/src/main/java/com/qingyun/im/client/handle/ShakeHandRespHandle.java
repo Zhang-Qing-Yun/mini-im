@@ -53,7 +53,7 @@ public class ShakeHandRespHandle extends SimpleChannelInboundHandler<ProtoMsg.Me
      * @param sessionId sessionId
      */
     public void startHeartBeat(ChannelHandlerContext ctx, String sessionId) {
-        heartBeat = ctx.executor().scheduleAtFixedRate(new HeatBeatTask(ctx, sessionId),
+        heartBeat = ctx.executor().scheduleAtFixedRate(new HeatBeatTask(ctx, sessionId, imClient),
                 0, HeartBeatConstants.PING_INTERVAL, TimeUnit.MILLISECONDS);
     }
 
