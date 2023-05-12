@@ -371,7 +371,7 @@ public class ImClient {
      * 获取好友列表
      * @return 好友列表
      */
-    protected List<String> getFriendList() throws Exception{
+    public List<String> getFriendList() throws Exception{
         //  获取当前登录用户
         String username = session.getUserInfo().getUsername();
         //  发HTTP请求登录的过程
