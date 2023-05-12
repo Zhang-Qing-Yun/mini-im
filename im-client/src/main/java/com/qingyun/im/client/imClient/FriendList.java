@@ -20,6 +20,9 @@ public class FriendList {
      * 初始化设置好友列表
      */
     public synchronized void initFriendList(Collection<String> friendList) {
+        if (friendList == null || friendList.isEmpty()) {
+            return;
+        }
         //  防御式拷贝
         for (String friend: friendList) {
             this.friendList.add(friend);
