@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 /**
  * @description： 给好友发送消息
  * @author: 張青云
- * @create: 2021-10-14 19:32
+ * @create: 2022-12-14 19:32
  **/
 @Component
 @LoginRequired

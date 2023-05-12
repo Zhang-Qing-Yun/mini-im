@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * @description： 本地缓存消息并按接收到的顺序
  * @author: 張青云
- * @create: 2021-10-16 16:14
+ * @create: 2023-01-16 16:14
  **/
 @Component
 public class MsgCacheManager {

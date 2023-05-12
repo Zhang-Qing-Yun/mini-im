@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 /**
  * @description： 发送握手消息
  * @author: 張青云
- * @create: 2021-10-13 13:50
+ * @create: 2023-02-13 13:50
  **/
 @Component
 public class ShakeHandSender extends BaseSender {

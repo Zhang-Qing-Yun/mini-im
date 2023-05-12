@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * @description： 好友列表的本地缓存
  * @author: 張青云
- * @create: 2021-10-14 19:57
+ * @create: 2023-01-14 19:57
  **/
 @Component
 public class FriendList {

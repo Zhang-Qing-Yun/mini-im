@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 /**
  * @description： 加载一些配置信息
  * @author: 張青云
- * @create: 2021-10-05 13:38
+ * @create: 2022-12-05 13:38
  **/
 @Component
 @Data

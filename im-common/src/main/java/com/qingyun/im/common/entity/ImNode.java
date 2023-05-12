@@ -8,7 +8,7 @@ import java.util.Objects;
 /**
  * @description： 在注册中心（Zookeeper）上的一个结点里的内容。
  * @author: 張青云
- * @create: 2021-10-08 19:30
+ * @create: 2023-03-08 19:30
  **/
 @Data
 public class ImNode implements Serializable {

@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * @description： 要缓存在redis中的实体类
  * @author: 張青云
- * @create: 2021-10-13 20:34
+ * @create: 2022-12-13 20:34
  **/
 @Data
 public class SessionCache implements Serializable {

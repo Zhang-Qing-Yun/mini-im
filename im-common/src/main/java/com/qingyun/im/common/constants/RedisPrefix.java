@@ -3,7 +3,7 @@ package com.qingyun.im.common.constants;
 /**
  * @description： Redis前缀
  * @author: 張青云
- * @create: 2021-10-13 20:53
+ * @create: 2023-03-13 20:53
  **/
 public interface RedisPrefix {
 

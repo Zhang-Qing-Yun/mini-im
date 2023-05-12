@@ -3,7 +3,7 @@ package com.qingyun.im.common.constants;
 /**
  * @description： 服务端使用到的一些常数
  * @author: 張青云
- * @create: 2021-10-09 10:35
+ * @create: 2023-03-09 10:35
  **/
 public interface ServerConstants {
     //  工作节点的父路径

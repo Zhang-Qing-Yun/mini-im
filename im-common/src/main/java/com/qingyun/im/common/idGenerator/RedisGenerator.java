@@ -7,7 +7,7 @@ import org.springframework.data.redis.support.atomic.RedisAtomicLong;
 /**
  * @description： 借助Redis来生成分布式唯一id，使用之前必须调用init方法来初始化，但是只需要初始化一次
  * @author: 張青云
- * @create: 2021-10-20 13:15
+ * @create: 2022-12-20 13:15
  **/
 public class RedisGenerator extends AbstractIDGenerator {
     //  redis中的key

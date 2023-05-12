@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * @description： 发送聊天消息
  * @author: 張青云
- * @create: 2021-10-14 20:58
+ * @create: 2023-02-14 20:58
  **/
 @Component
 public class ChatSender extends BaseSender {

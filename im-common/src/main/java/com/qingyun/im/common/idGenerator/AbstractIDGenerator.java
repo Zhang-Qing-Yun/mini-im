@@ -5,7 +5,7 @@ import com.qingyun.im.common.enums.IDGeneratorType;
 /**
  * @description：
  * @author: 張青云
- * @create: 2021-10-20 09:28
+ * @create: 2022-12-20 09:28
  **/
 public abstract class AbstractIDGenerator implements IDGenerator {
     @Override

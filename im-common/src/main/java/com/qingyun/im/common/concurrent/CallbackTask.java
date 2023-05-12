@@ -3,7 +3,7 @@ package com.qingyun.im.common.concurrent;
 /**
  * @description： 异步带返回值的任务
  * @author: 張青云
- * @create: 2021-10-13 09:58
+ * @create: 2023-03-13 09:58
  **/
 public interface CallbackTask<R> {
     /**

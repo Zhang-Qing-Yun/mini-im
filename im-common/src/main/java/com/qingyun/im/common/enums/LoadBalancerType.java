@@ -3,7 +3,7 @@ package com.qingyun.im.common.enums;
 /**
  * @description： 负载均衡策略
  * @author: 張青云
- * @create: 2021-10-12 22:16
+ * @create: 2023-03-12 22:16
  **/
 public enum LoadBalancerType {
     DEFAULT(0),

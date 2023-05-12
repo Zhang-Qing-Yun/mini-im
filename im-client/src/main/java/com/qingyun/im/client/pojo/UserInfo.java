@@ -3,7 +3,7 @@ package com.qingyun.im.client.pojo;
 /**
  * @description： 用户信息，单例模式
  * @author: 張青云
- * @create: 2021-10-01 16:14
+ * @create: 2023-02-01 16:14
  **/
 public class UserInfo {
     private static volatile UserInfo instance;

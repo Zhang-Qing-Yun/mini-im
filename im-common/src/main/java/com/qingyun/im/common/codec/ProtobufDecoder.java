@@ -10,7 +10,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 /**
  * @description： 基于protobuf的解码器，同时继承于LengthFieldBasedFrameDecoder来解决粘包拆包问题
  * @author: 張青云
- * @create: 2021-10-10 15:04
+ * @create: 2023-03-10 15:04
  **/
 public class ProtobufDecoder extends LengthFieldBasedFrameDecoder {
     //  魔数

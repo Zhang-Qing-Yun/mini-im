@@ -5,7 +5,7 @@ import com.qingyun.im.common.entity.ProtoMsg;
 /**
  * @description： 构建握手应答消息
  * @author: 張青云
- * @create: 2021-10-13 17:07
+ * @create: 2022-12-13 17:07
  **/
 public class ShakeHandRespMsgBuilder {
 

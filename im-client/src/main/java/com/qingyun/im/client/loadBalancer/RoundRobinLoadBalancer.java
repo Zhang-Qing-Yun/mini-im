@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @description： 轮询负载均衡策略
  * @author: 張青云
- * @create: 2021-10-20 14:30
+ * @create: 2023-01-20 14:30
  **/
 public class RoundRobinLoadBalancer implements LoadBalancer {
     private final AtomicInteger index = new AtomicInteger(0);

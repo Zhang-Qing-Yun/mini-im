@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * @description： 消息持久化系统
  * @author: 張青云
- * @create: 2021-10-16 16:18
+ * @create: 2023-02-16 16:18
  **/
 public interface Persistence {
     /**

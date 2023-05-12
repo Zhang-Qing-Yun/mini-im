@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * @description： 将最后一条未读消息是最早的好友的所有未读消息持久化（最近最长时间未发消息）
  * @author: 張青云
- * @create: 2021-10-17 13:34
+ * @create: 2023-02-17 13:34
  **/
 @Component
 public class PersistOld implements OverflowHandle {

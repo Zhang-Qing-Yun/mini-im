@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @description： 客户端主配置类
  * @author: 張青云
- * @create: 2021-09-25 13:51
+ * @create: 2022-11-25 13:51
  **/
 @Configuration
 public class ClientConfig {

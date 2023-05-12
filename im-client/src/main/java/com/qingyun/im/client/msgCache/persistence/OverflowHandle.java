@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * @description： 处理未读消息缓存超过指定大小的情况
  * @author: 張青云
- * @create: 2021-10-17 13:31
+ * @create: 2023-02-17 13:31
  **/
 public interface OverflowHandle {
     /**

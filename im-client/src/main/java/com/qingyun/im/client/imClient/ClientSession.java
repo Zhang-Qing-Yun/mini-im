@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 /**
  * @description： 记录客户端的连接信息
  * @author: 張青云
- * @create: 2021-10-03 16:21
+ * @create: 2023-01-03 16:21
  **/
 @Component
 @Data

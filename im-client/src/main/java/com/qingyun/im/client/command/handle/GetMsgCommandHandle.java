@@ -14,7 +14,7 @@ import java.util.*;
 /**
  * @description： 获取来自某个好友的未读消息列表
  * @author: 張青云
- * @create: 2021-10-17 19:42
+ * @create: 2022-12-17 19:42
  **/
 @Component
 public class GetMsgCommandHandle implements CommandHandle {

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @description： 服务端主配置类
  * @author: 張青云
- * @create: 2021-10-05 19:42
+ * @create: 2022-12-05 19:42
  **/
 @Configuration
 public class ServerConfig {

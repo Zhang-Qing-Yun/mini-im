@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutionException;
 /**
  * @description： 管理当前Server要等待的结点的集合
  * @author: 張青云
- * @create: 2021-10-09 23:33
+ * @create: 2022-12-09 23:33
  **/
 @Component
 public class WaitManager {

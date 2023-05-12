@@ -8,7 +8,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 /**
  * @description： 基于protobuf的编码器
  * @author: 張青云
- * @create: 2021-10-10 15:04
+ * @create: 2023-03-10 15:04
  **/
 public class ProtobufEncoder  extends MessageToByteEncoder<ProtoMsg.Message> {
     //  魔数

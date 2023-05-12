@@ -5,7 +5,7 @@ import com.qingyun.im.common.entity.ProtoMsg;
 /**
  * @description： 用来构建通知类型消息的工具类
  * @author: 張青云
- * @create: 2021-10-10 16:22
+ * @create: 2022-12-10 16:22
  **/
 public class NotificationMsgBuilder {
     /**

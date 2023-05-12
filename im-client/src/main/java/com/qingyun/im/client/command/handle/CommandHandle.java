@@ -3,7 +3,7 @@ package com.qingyun.im.client.command.handle;
 /**
  * @description： 命令处理器
  * @author: 張青云
- * @create: 2021-09-24 19:37
+ * @create: 2022-11-24 19:37
  **/
 public interface CommandHandle {
     /**

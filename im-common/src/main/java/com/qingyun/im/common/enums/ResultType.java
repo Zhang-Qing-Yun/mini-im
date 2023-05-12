@@ -3,7 +3,7 @@ package com.qingyun.im.common.enums;
 /**
  * @description： 返回的结果的类型
  * @author: 張青云
- * @create: 2021-09-25 16:30
+ * @create: 2022-11-25 16:30
  **/
 public enum ResultType {
     SUCCESS(200, "成功"),

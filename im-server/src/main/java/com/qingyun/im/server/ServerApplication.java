@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationContext;
 /**
  * @description： Netty Server主启动类
  * @author: 張青云
- * @create: 2021-10-05 19:37
+ * @create: 2022-12-05 19:37
  **/
 @SpringBootApplication
 @MapperScan("com.qingyun.im.server.Mapper")

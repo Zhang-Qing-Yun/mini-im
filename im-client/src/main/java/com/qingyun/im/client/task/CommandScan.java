@@ -10,7 +10,7 @@ import java.util.Scanner;
 /**
  * @description： 读取用户输入的命令
  * @author: 張青云
- * @create: 2021-10-01 15:28
+ * @create: 2023-02-01 15:28
  **/
 @Component
 public class CommandScan implements Runnable{

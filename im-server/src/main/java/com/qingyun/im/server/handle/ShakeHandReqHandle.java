@@ -18,7 +18,7 @@ import javax.annotation.PostConstruct;
 /**
  * @description： 处理握手消息
  * @author: 張青云
- * @create: 2021-10-13 14:06
+ * @create: 2022-12-13 14:06
  **/
 @Component
 @ChannelHandler.Sharable

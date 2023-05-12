@@ -5,7 +5,7 @@ import lombok.Data;
 /**
  * @description： 服务期间的通知类消息
  * @author: 張青云
- * @create: 2021-10-09 22:09
+ * @create: 2023-03-09 22:09
  **/
 @Data
 public class Notification<T> {

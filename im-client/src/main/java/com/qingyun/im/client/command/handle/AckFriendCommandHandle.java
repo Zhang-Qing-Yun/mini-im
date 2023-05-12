@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * @description： 同意加好友请求的命令的关键字
  * @author: 張青云
- * @create: 2021-10-06 14:29
+ * @create: 2022-12-06 14:29
  **/
 @Component
 @LoginRequired

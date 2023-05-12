@@ -12,7 +12,7 @@ import java.util.TreeMap;
 /**
  * @description： 一致性哈希负载均衡算法
  * @author: 張青云
- * @create: 2021-10-20 18:41
+ * @create: 2023-01-20 18:41
  **/
 public class ConsistentHashLoadBalancer implements LoadBalancer {
     //  由所有服务端所构成的哈希环
@@ -26,7 +26,7 @@ public class ConsistentHashLoadBalancer implements LoadBalancer {
 
         //  检查服务列表是否发生了变化
         //  如果发生了变化则重新构建哈希环，但是原来已有的节点的位置(hash值)不会发生变化
-        if (selector == null || selector.identityHashCode != identityHashCode) {
+        if (selector == null || selector.getIdentityHashCode() != identityHashCode) {
             selector = new ConsistentHashSelector(imNodes, 160, identityHashCode);
         }
 
@@ -100,7 +100,7 @@ public class ConsistentHashLoadBalancer implements LoadBalancer {
          * 从哈希环上选择一个节点
          */
         public String select(String username) {
-            //  先对请求id计算md5，再计算hash值，然后选择大于等于该hash值的第一个节点
+            //  先对关键字计算md5，再计算hash值，然后选择大于等于该hash值的第一个节点
             byte[] digest = md5(username);
             return selectForKey(hash(digest, 0));
         }

@@ -6,7 +6,7 @@ import com.qingyun.im.common.exception.IMRuntimeException;
 /**
  * @description： 使用雪花算法来生成分布式全局唯一id，使用之前需要调用init方法
  * @author: 張青云
- * @create: 2021-10-20 09:27
+ * @create: 2022-12-20 09:27
  **/
 public class SnowFlake extends AbstractIDGenerator {
     /**

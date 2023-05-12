@@ -4,7 +4,7 @@ package com.qingyun.im.common.exception;
 /**
  * @description：
  * @author: 張青云
- * @create: 2021-09-25 14:51
+ * @create: 2022-11-25 14:51
  **/
 public class IMException extends Exception{
     //  状态码

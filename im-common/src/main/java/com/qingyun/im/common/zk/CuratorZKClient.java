@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * @description： 使用Curator充当Zk客户端
  * @author: 張青云
- * @create: 2021-10-08 20:44
+ * @create: 2022-12-08 20:44
  **/
 public class CuratorZKClient {
     //  zk 服务端集群地址

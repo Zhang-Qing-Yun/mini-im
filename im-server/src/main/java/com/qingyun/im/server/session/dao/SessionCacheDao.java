@@ -5,7 +5,7 @@ import com.qingyun.im.server.session.entity.SessionCache;
 /**
  * @description：
  * @author: 張青云
- * @create: 2021-10-13 20:28
+ * @create: 2022-12-13 20:28
  **/
 public interface SessionCacheDao {
     /**

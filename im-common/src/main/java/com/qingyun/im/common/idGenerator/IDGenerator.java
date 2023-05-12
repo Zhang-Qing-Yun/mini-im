@@ -5,7 +5,7 @@ import com.qingyun.im.common.enums.IDGeneratorType;
 /**
  * @description： 分布式全局唯一ID生成器
  * @author: 張青云
- * @create: 2021-10-13 14:30
+ * @create: 2022-12-13 14:30
  **/
 public interface IDGenerator {
     /**

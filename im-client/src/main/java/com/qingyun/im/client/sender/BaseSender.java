@@ -13,7 +13,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 /**
  * @description： 发送消息的基类
  * @author: 張青云
- * @create: 2021-10-13 12:33
+ * @create: 2023-02-13 12:33
  **/
 public abstract class BaseSender {
 

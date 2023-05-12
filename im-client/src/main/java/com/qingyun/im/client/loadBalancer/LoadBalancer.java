@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * @description： 负载均衡
  * @author: 張青云
- * @create: 2021-10-12 22:02
+ * @create: 2023-01-12 22:02
  **/
 public interface LoadBalancer {
 

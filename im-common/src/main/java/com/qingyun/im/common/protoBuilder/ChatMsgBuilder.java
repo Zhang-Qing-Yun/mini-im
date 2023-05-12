@@ -5,7 +5,7 @@ import com.qingyun.im.common.entity.ProtoMsg;
 /**
  * @description： 构建聊天消息
  * @author: 張青云
- * @create: 2021-10-14 21:17
+ * @create: 2022-12-14 21:17
  **/
 public class ChatMsgBuilder {
 

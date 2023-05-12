@@ -12,7 +12,7 @@ import java.util.Collection;
 /**
  * @description： 获取存在未读消息的全部好友
  * @author: 張青云
- * @create: 2021-10-17 19:41
+ * @create: 2022-12-17 19:41
  **/
 @Component
 public class GetFriendsWithMsgCommandHandle implements CommandHandle {

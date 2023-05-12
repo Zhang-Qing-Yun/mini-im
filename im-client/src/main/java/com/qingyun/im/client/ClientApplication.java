@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationContext;
 /**
  * @description： 客户端主启动类
  * @author: 張青云
- * @create: 2021-09-25 13:01
+ * @create: 2022-11-25 13:01
  **/
 @SpringBootApplication
 public class ClientApplication {

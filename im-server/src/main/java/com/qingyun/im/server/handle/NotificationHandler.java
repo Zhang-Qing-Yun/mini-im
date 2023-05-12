@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 /**
  * @description： 用来处理服务器节点间通知的handle
  * @author: 張青云
- * @create: 2021-10-10 19:09
+ * @create: 2022-12-10 19:09
  **/
 @Component
 @ChannelHandler.Sharable

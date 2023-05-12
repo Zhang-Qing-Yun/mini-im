@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @description： 多线程工具类
  * @author: 張青云
- * @create: 2021-10-13 10:18
+ * @create: 2022-12-13 10:18
  **/
 public final class ThreadUtil {
     //  CPU核数

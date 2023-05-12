@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @description： session管理器
  * @author: 張青云
- * @create: 2021-10-13 18:52
+ * @create: 2022-12-13 18:52
  **/
 @Component
 public class SessionManager {

@@ -5,7 +5,7 @@ import com.qingyun.im.server.router.MsgSource;
 /**
  * @description：
  * @author: 張青云
- * @create: 2021-10-13 18:53
+ * @create: 2022-12-13 18:53
  **/
 public interface ServerSession extends MsgSource {
 //    /**

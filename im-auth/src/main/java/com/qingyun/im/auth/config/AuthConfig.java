@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 /**
  * @description：
  * @author: 張青云
- * @create: 2021-09-20 16:32
+ * @create: 2022-11-20 16:32
  **/
 @Configuration
 @MapperScan("com.qingyun.im.auth.mapper")

@@ -7,7 +7,7 @@ import com.qingyun.im.common.exception.IMException;
 /**
  * @description： 命令类型
  * @author: 張青云
- * @create: 2021-09-24 19:42
+ * @create: 2022-11-24 19:42
  **/
 public enum Command {
     HELP("help", "提供帮助，获取所有的命令  【示例：help】"),
